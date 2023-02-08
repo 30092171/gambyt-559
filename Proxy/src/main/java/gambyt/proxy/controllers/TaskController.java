@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/tasks")
 public class TaskController {
+
     @GetMapping("")
     public String getAllTasks() {
 //        Endpoint to return all tickets
@@ -22,8 +23,13 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable("id" long id) {
+    public void deleteTask(@PathVariable("id") long id) {
 //        Endpoint to delete a task by id
+    }
+
+    @GetMapping("/user/{id}")
+    public void getUserTasks(@PathVariable("id") long id) {
+//        Endpoint to get all of a specific users tasks
     }
 
 }
