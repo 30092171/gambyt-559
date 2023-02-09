@@ -31,5 +31,4 @@ public class TaskController {
     public void getUserTasks(@PathVariable("id") long id) {
 //        Endpoint to get all of a specific users tasks
     }
-
 }
