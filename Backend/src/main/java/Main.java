@@ -47,6 +47,6 @@ public class Main {
 		d.readJSON("C:\\Users\\austi\\Desktop\\JSON_Test.json");
 		
 		d.printTickets();
-		
+		d.printMessages();
 	}
 }

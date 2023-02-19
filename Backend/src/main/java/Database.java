@@ -65,15 +65,6 @@ public class Database {
 		JSONObject JInbox = (JSONObject) JObj.get("inbox"); //Grabs nested object for inbox messages
 		
 		
-//		Iterator<String> keys = jsonObject.keys();
-//
-//		while(keys.hasNext()) {
-//		    String key = keys.next();
-//		    if (jsonObject.get(key) instanceof JSONObject) {
-//		          // do something with jsonObject here      
-//		    }
-//		}
-		
 		//First we will read all of the ticket information
 		
 		//Taken from https://www.tabnine.com/code/java/methods/org.json.simple.JSONObject/keySet
@@ -90,12 +81,13 @@ public class Database {
 			t.assignee = (long) JTicketObject.get("assignee");
 			t.status = (long) JTicketObject.get("status");
 			
-			t.subscribers = new ArrayList<String>(); //TODO
+			t.subscribers = new ArrayList<String>();
 			
 			JSONArray subs = (JSONArray) JTicketObject.get("subscribers");
 			ArrayList<String> s = new ArrayList<String>();
 			
-			for(Iterator<String> it = subs.iterator();it.hasNext(); ) {
+			for(@SuppressWarnings("unchecked")
+			Iterator<String> it = subs.iterator();it.hasNext(); ) {
 				s.add((String) it.next());
 			}
 			
@@ -108,10 +100,28 @@ public class Database {
 			
 			this.Tickets.put(ticketID, t); //Adds ticket to memory
 			
-			//t.PrintTicketInfo();
 		}
 		
-		//Do inbox
+		
+		//Now that tickets are read, we will read the inbox
+		for (Iterator iterator = JInbox.keySet().iterator(); iterator.hasNext(); ) {
+			
+			//Gets User ID and their messages
+			String userID = (String) iterator.next();
+			
+			JSONArray JMessageList = (JSONArray) JInbox.get(userID);
+			
+			ArrayList<String> messages = new ArrayList<String>();
+			
+			//Commits messages to an ArrayList
+			for(@SuppressWarnings("unchecked")
+			Iterator<String> it = JMessageList.iterator();it.hasNext(); ) {
+				messages.add((String) it.next());
+			}
+			
+			this.Inbox.put(userID, messages); //Adds messages to memory		
+			
+		}	
 		
 	}
 	
@@ -123,6 +133,24 @@ public class Database {
 		for (String key : this.Tickets.keySet()) {
 		    System.out.println("Ticket ID: " + key);
 		    this.Tickets.get(key).PrintTicketInfo();
+		}
+	}
+	
+	/**
+	 * Prints all the messages within memory
+	 */
+	public void printMessages() {
+		for(String user : this.Inbox.keySet()) {
+			System.out.println("User: " + user);
+			System.out.println("Messages: ");
+			
+			int i = 0;
+			for(String message : this.Inbox.get(user)) {
+				System.out.println("   [" + i + "]:  " + message);
+				i++;
+			}
+			
+			System.out.println("\n");
 		}
 	}
 }
