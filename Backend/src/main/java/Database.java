@@ -22,6 +22,7 @@ public class Database {
 	
 	private HashMap<String,Ticket> Tickets;
 	private HashMap<String, ArrayList<String>> Inbox;
+
 	
 	
 	/**
@@ -49,8 +50,104 @@ public class Database {
 	}
 	
 	/**
+	 * Gets all tickets in memory
+	 * @return : HashMap of all the tickets (Key = id, value = ticket)
+	 */
+	public HashMap<String,Ticket> getTickets(){
+		return new HashMap<String,Ticket>(this.Tickets);
+	}
+	
+	/**
+	 * Gets particular ticket in memory
+	 * As of right it is returned by reference as no clone constructor is present in Ticket
+	 * @param tID : The id of the ticket as a String
+	 * @return : Ticket Object of requested ticket
+	 */
+	public Ticket getTicket(String tID) {
+		return this.Tickets.get(tID);
+	}
+	
+	/**
+	 * Gets all inboxes in database
+	 * @return : HashMap of all messages (Key = userID, value = ArrayList of messages)
+	 */
+	public HashMap<String, ArrayList<String>> getInboxes(){
+		return new HashMap<String, ArrayList<String>>(this.Inbox);
+	}
+	
+	/**
+	 * Gets messages of a particular user
+	 * @param uID : Id of user as String
+	 * @return : ArrayList of messages
+	 */
+	public ArrayList<String> getMessages(String uID){
+		return new ArrayList<String>(this.Inbox.get(uID));
+	}
+	
+	
+	/**
+	 * Removes ticket from database
+	 * @param tID : The id of the ticket as a String
+	 */
+	public void removeTicket(String tID) {
+		this.Tickets.remove(tID);
+	}
+	
+	
+	/**
+	 * Removes all messages of particular user
+	 * @param uID : Id of user as String
+	 */
+	public void clearMessages(String uID) {
+		this.Inbox.remove(uID);
+	}
+	
+	
+	public void replaceTicket(String tID, Ticket t) {
+		this.Tickets.replace(tID, t);
+	}
+	
+	 /**
+	 * Adds ticket to database
+	 * @param tID : The id of the ticket as a String
+	 * @param t : Ticket object being added
+	 */
+	public void addTicket(String tID, Ticket t) {
+		this.Tickets.put(tID, t);
+	}
+	
+	/**
+	 * Adds new inbox of messages for a particular user
+	 * @param uID : Id of user as String
+	 * @param messages : The array list of messages being added
+	 */
+	public void addUserInbox(String uID, ArrayList<String> messages) {
+		this.Inbox.put(uID,messages);
+	}
+	
+	/*
+	 * Adds message to a particular users inbox
+	 * @param uID : Id of user as String
+	 * @param message : The message to be added to their inbox
+	 */
+	public void addMessage(String uID, String message) {
+		if(this.Inbox.containsKey(uID)) {
+			this.Inbox.get(uID).add(message);
+		}else {
+			ArrayList<String> m = new ArrayList<String>();
+			m.add(message);
+			this.Inbox.put(uID, m);
+		}
+		
+	}
+	
+
+	
+	
+	/**
 	 * Reads JSON and populates database
 	 * NOTE: REPLACES DATABASE IN MEMORY
+	 * @param path : The path the to JSON file
 	 */
 	public void readJSON(String path) throws ParseException, FileNotFoundException, IOException {
 		
@@ -126,6 +223,73 @@ public class Database {
 	}
 	
 	
+	
+	/**
+	 * Saves database in Memory to JSON file
+	 * Note: This will replace the currently saved JSON
+	 * @param path : The path which the JSON is written to
+	 */
+	@SuppressWarnings("unchecked")
+	public void saveJSON(String path) throws IOException {	
+
+		FileWriter file = new FileWriter(path); //Opens writer first
+		
+		JSONObject mainObject = new JSONObject();
+		JSONObject ticketsObject = new JSONObject();
+		JSONObject inboxesObject = new JSONObject();
+		
+		//Populate Tickets
+		for(String ticketID : this.Tickets.keySet()) {
+			JSONObject tObject = new JSONObject(); //Creates JSON Object for particular ticket
+			
+			Ticket t = this.Tickets.get(ticketID);
+			
+			tObject.put("name", t.name);
+			tObject.put("assignee", t.assignee);
+			tObject.put("status", t.status);
+			
+			
+			JSONArray subs = new JSONArray();
+			for(int i = 0; i < t.subscribers.size(); i++) {
+				subs.add(t.subscribers.get(i));
+			}
+			
+			tObject.put("subscribers", subs);
+			
+			
+			
+			tObject.put("description", t.description);
+			tObject.put("date_assigned", t.dateAssigned);
+			tObject.put("priority", t.priority);
+			
+			ticketsObject.put(ticketID, tObject); //Puts ticket in JSON Object
+		}
+		
+		//Populate Inbox
+		for(String uID : this.Inbox.keySet()) {
+			JSONArray iArray = new JSONArray(); //Creates JSON Array for particular inbox
+			
+			for(int i = 0; i < this.Inbox.get(uID).size(); i++) {
+				iArray.add(this.Inbox.get(uID).get(i));
+			}
+			
+			inboxesObject.put(uID, iArray); //Adds user and their messages to JSON object
+			
+		}
+		
+		//Put together and write
+		mainObject.put("tickets", ticketsObject);
+		mainObject.put("inbox", inboxesObject);
+		
+		file.write(mainObject.toJSONString());
+		file.flush();
+		file.close();
+		
+		
+		
+	}
+	
+	
 	/**
 	 * Prints all the tickets within memory
 	 */
@@ -142,7 +306,7 @@ public class Database {
 	public void printMessages() {
 		for(String user : this.Inbox.keySet()) {
 			System.out.println("User: " + user);
-			System.out.println("Messages: ");
+			System.out.println(" Messages: ");
 			
 			int i = 0;
 			for(String message : this.Inbox.get(user)) {
@@ -150,7 +314,7 @@ public class Database {
 				i++;
 			}
 			
-			System.out.println("\n");
+			System.out.println(""); //Newline
 		}
 	}
 }

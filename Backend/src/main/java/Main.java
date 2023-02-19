@@ -44,9 +44,11 @@ public class Main {
 //		file.close();
 		
 		Database d = new Database();
-		d.readJSON("C:\\Users\\austi\\Desktop\\JSON_Test.json");
+		d.readJSON("C:\\Users\\austi\\Desktop\\JSON_Write Test.json");
 		
 		d.printTickets();
 		d.printMessages();
+		
+		d.saveJSON("C:\\Users\\austi\\Desktop\\JSON_Write Test.json");
 	}
 }

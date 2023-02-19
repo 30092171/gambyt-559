@@ -14,18 +14,18 @@ public class Ticket {
 	
 	public void PrintTicketInfo() {
 		
-		System.out.println("Name: " + name);
-		System.out.println("assignee: " + assignee);
-		System.out.println("status: " + status);
+		System.out.println(" Name: " + name);
+		System.out.println(" assignee: " + assignee);
+		System.out.println(" status: " + status);
 		
-		System.out.println("Subscribers: ");
+		System.out.println(" Subscribers: ");
 		for(int i = 0; i < subscribers.size();i++) {
-			System.out.println("   " + subscribers.get(i));
+			System.out.println("    " + subscribers.get(i));
 		}
 		
-		System.out.println("description: " + description);
-		System.out.println("dateAssigned: " + dateAssigned);
-		System.out.println("priority: " + priority + "\n");
+		System.out.println(" description: " + description);
+		System.out.println(" dateAssigned: " + dateAssigned);
+		System.out.println(" priority: " + priority + "\n");
 		
 	
 	}
