@@ -1,15 +1,19 @@
 import java.util.ArrayList; // import the ArrayList class
 
 
+/**
+ * Object to represent a Ticket
+ *
+ */
 public class Ticket {
 
 	public String name = "";
-	public long assignee = -1;
-	public long status = -1;
+	public long assignee = -1; //id of user who has been assigned the ticket (-1 means unassigned)
+	public long status = -1; //0=to-do, 1=in-progress, 2=done
 	public ArrayList<String> subscribers = new ArrayList<String>();
 	public String description = "";
 	public String dateAssigned = "0000-00-00";
-	public long priority = -1;
+	public long priority = -1; //0=low 1=medium 2=high
 
 	
 	public void PrintTicketInfo() {

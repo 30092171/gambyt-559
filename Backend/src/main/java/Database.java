@@ -141,8 +141,102 @@ public class Database {
 		
 	}
 	
-
+	/**
+	 * Notifies all subscribers a message
+	 * @param t : The ticket 
+	 * @param Message : The message which is to be added to users inboxes
+	 */
+	public void notifySubscribers(Ticket t, String Message) {
+		for(String sub : t.subscribers) {
+			this.addMessage(sub, Message);
+		}
+	}
 	
+	/**
+	 * Notifies all subscribers a message
+	 * @param tID : The ticket ID as a String
+	 * @param Message : The message which is to be added to users inboxes
+	 */
+	public void notifySubscribers(String tID, String Message) {
+		Ticket t = this.Tickets.get(tID);
+		for(String sub : t.subscribers) {
+			this.addMessage(sub, Message);
+		}
+	}
+	
+	/**
+	 * The function returns if a particular user has messages waiting for them
+	 * @param uID : The ID of the user as a String
+	 * @return true -> User has messages | false -> User does not have messages
+	 */
+	public boolean doesUserHaveMessages(String uID) {
+		if(this.Inbox.containsKey(uID)) {
+			if(Inbox.get(uID).isEmpty()) {
+				return false;
+			}
+			
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	
+	
+	/**
+	 * Gets a list of Ticket IDs that are assigned to a particular user
+	 * @param uID : The id of a user as a String
+	 * @return : an ArrayList of Strings representing ticket IDs
+	 */
+	public ArrayList<String> getTicketsByUser(String uID){
+		ArrayList<String> l = new ArrayList<String>();
+		
+		for(String tID : this.Tickets.keySet()) {
+			Ticket t = this.Tickets.get(tID);
+			if(String.valueOf(t.assignee).equals(uID)) {
+				l.add(tID);
+			}
+		}
+		
+		return l;
+	}
+	
+	
+	/**
+	 * Gets all TicketIDs of unassigned tickets
+	 * @return A list of ticketIDs as Strings
+	 */
+	public ArrayList<String> getTicketsUnassigned(){
+		ArrayList<String> l = new ArrayList<String>();
+		
+		for(String tID : this.Tickets.keySet()) {
+			Ticket t = this.Tickets.get(tID);
+			if(t.assignee == -1) {
+				l.add(tID);
+			}
+		}
+		
+		return l;
+		
+	}
+	
+	/**
+	 * Returns a list of ticket objects
+	 * Can be used in conjunction with getTickets functions
+	 * @param tIDs : A list of ticket ids
+	 * @return : A list of ticket objects
+	 */
+	public ArrayList<Ticket> getTickets(ArrayList<String> tIDs){
+		ArrayList<Ticket> l = new ArrayList<Ticket>();
+		
+		for(String tID : this.Tickets.keySet()) {
+			if(tIDs.contains(tID)) {
+				l.add(this.Tickets.get(tID));
+			}
+		}
+		
+		return l;
+	}
 	
 	/**
 	 * Reads JSON and populates database

@@ -12,43 +12,16 @@ import org.json.simple.parser.ParseException;
 import java.io.FileWriter;
 
 public class Main {
-	
-	public static void main(String[] args) throws ParseException, FileNotFoundException, IOException {
-//		String path = "C:\\Users\\austi\\Desktop\\nest.json";
+
+//Left this here as an example of how to use the database
+//	public static void main(String[] args) throws ParseException, FileNotFoundException, IOException {
 //		
-//		JSONParser parser = new JSONParser();
-//		Reader reader = new FileReader(path);
+//		Database d = new Database(); // or d = new Database(path)
+//		d.readJSON("src/JSON_TEST.json"); //Not needed if Database(path) was used
 //		
-//		Object obj = parser.parse(reader);
+//		d.printTickets(); //Displays Tickets
+//		d.printMessages(); //Displays Messages
 //		
-//		JSONObject jObj= (JSONObject) obj;
-//		
-//		JSONObject kObj= (JSONObject) jObj.get("a");
-//		
-//		long b = (long) kObj.get("b");
-//		
-//		System.out.println(b); 
-//		
-//		reader.close(); //Closes Reader
-//		
-//		
-//		JSONObject newObj = new JSONObject();
-//		JSONObject newObj2 = new JSONObject();
-//		
-//		newObj2.put("b", 12);
-//		newObj.put("a", newObj2);
-//		
-//		FileWriter file = new FileWriter(path);
-//		file.write(newObj.toJSONString());
-//		file.flush();
-//		file.close();
-		
-		Database d = new Database();
-		d.readJSON("C:\\Users\\austi\\Desktop\\JSON_Write Test.json");
-		
-		d.printTickets();
-		d.printMessages();
-		
-		d.saveJSON("C:\\Users\\austi\\Desktop\\JSON_Write Test.json");
-	}
+//		d.saveJSON("src/JSON_TEST.json"); //Writes database
+//	}
 }
