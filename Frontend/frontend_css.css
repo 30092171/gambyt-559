@@ -1,0 +1,102 @@
+/* General */
+* {
+    font-family: "century gothic";
+  }
+  
+  button {
+    background-color: white;
+    border: 2px solid lightgrey;
+    width: 200px;
+    height: 75px;
+    font-size: 25px;
+    color: red;
+    margin: 10px;
+  }
+  button:hover {
+    background-color: red;
+    color: white;
+    border: 0;
+  }
+  
+  
+  /* Class */ 
+  
+  .screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .title {
+    letter-spacing: 2px;
+    font-family: "century gothic";
+    font-size: 70px;
+    color: grey;
+    margin: 0;
+    padding: 10px;
+    display: inline-block;
+    font-weight: bold; 
+  }
+  .title2 {
+    font-size: 50px;
+    font-weight: bold;
+    color: grey;
+    letter-spacing: 0.2px;
+  }
+  .secondHeading {
+    color: grey;
+    font-size: 40px;
+    font-weight: normal;
+  }
+  
+  .thirdHeading {
+    color: grey;
+    font-size: 20px;
+  }
+  .webpageText {
+    color: darkgrey;
+  
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+  .hidden {
+    display: none;
+  }
+  .btn-pageMenu {
+    width: 150px;
+    font-size: 15px;
+    height: 30px;
+  }
+  
+  
+  
+  /* ID */
+  #pageMenuList > li {
+    display: inline;
+  }
+  
+  #pageMenuList {
+    text-align: center;
+    padding: 0;
+  }
+  #titleHeader {
+    text-align: center;
+    display: block;
+    color: grey;
+    background-size: 100%;
+    padding: 25px;
+  }
+  #head {
+    text-align: center;
+  }
+  #addTicket {
+    width: 400px; /* specify your width here */
+    margin: 0 auto;
+  } 
+  #ticket {
+    text-align: left;
+    width: 400px;
+  }
+  
+  
