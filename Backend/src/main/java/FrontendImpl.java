@@ -1,3 +1,5 @@
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -5,11 +7,11 @@ import java.util.HashMap;
 	Remote object to be called from Proxy (client). Handles logic between proxy
 	requests and database queries.
  */
-public class FrontendImpl implements RemoteFrontend {
+public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend {
 	private String pathToData;
 	private Database database;
 
-	public FrontendImpl(String path) {
+	public FrontendImpl(String path) throws RemoteException {
 		setPathToData(path);
 		this.database = new Database();
 	}
