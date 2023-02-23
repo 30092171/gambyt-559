@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -18,39 +19,59 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 
 	public String newTicket(String userId) {
 
+
 		return "";
 	}
 
-	public void deleteTicket() {
+	public void deleteTicket(String tID) {
+		String tName = database.getTicket(tID).name;
+		database.removeTicket(tID);
+		database.notifySubscribers(tID, "Ticket " + tID + ": " + tName + " has been deleted.");
+	}
+
+	public ArrayList<String> getUserInbox(String userID) {
+		return database.getInboxes().get(userID);
+	}
+
+	public void updateTicket(String tID) {
 
 	}
 
-	public ArrayList<String> getUserInbox() {
-
-		return new ArrayList<String>();
+	public void clearUserInbox(String userID) {
+		if (database.doesUserHaveMessages(userID)) {
+			database.clearMessages(userID);
+			try {
+				database.saveJSON(pathToData);
+			}
+			catch (IOException e) {
+				System.out.println("Failed to clear user inbox due to the following exception:" + e.getMessage());
+			}
+		}
 	}
 
-	public void updateTicket() {
+	public HashMap<String, Ticket> getTicketByUser(String userID) {
+		ArrayList<String> tIDs = database.getTicketsByUser(userID);
+		ArrayList<Ticket> tickets = database.getTickets(tIDs);
+		HashMap<String, Ticket> ticketMap = new HashMap<String, Ticket>();
+		for (int i = 0; i < tIDs.size(); i++) {
+			ticketMap.put(tIDs.get(i), tickets.get(i));
+		}
 
-	}
-
-	public void clearUserInbox() {
-
-	}
-
-	public ArrayList<Ticket> getTicketByUser() {
-
-		return new ArrayList<Ticket>();
+		return ticketMap;
 	}
 
 	public HashMap<String,Ticket> getAllTickets() {
-
-		return new HashMap<String, Ticket>();
+		return database.getTickets();
 	}
 
 	public HashMap<String, Ticket> getAllUnassigned() {
-
-		return new HashMap<String, Ticket>();
+		ArrayList<String> tIDs = database.getTicketsUnassigned();
+		ArrayList<Ticket> tickets = database.getTickets(tIDs);
+		HashMap<String, Ticket> ticketMap = new HashMap<String, Ticket>();
+		for (int i = 0; i < tIDs.size(); i++) {
+			ticketMap.put(tIDs.get(i), tickets.get(i));
+		}
+		return ticketMap;
 	}
 
 	public String getPathToData() {

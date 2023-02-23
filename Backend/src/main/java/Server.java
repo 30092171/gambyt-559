@@ -21,6 +21,7 @@ public class Server {
 
         }
         catch (Exception e) {
+            System.out.println("Exception occurred while running server: " + e.toString());
             e.printStackTrace();
         }
 
