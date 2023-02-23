@@ -16,8 +16,9 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		this.database = new Database();
 	}
 
-	public void newTicket() {
+	public String newTicket(String userId) {
 
+		return "";
 	}
 
 	public void deleteTicket() {

@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public interface RemoteFrontend extends Remote{
 
-    public void newTicket() throws RemoteException;
+    public String newTicket(String userId) throws RemoteException;
 
     public void deleteTicket() throws RemoteException;
 
