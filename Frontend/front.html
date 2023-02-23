@@ -1,0 +1,152 @@
+<!-- <!DOCTYPE html> -->
+<html>
+<head>
+	<title>Gambyt Solutions</title>
+</head>
+<body>
+	<header>
+		<h1>Gambyt Solutions</h1>
+    <td><img style="width: 100px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Gambit_Esports_2020_logo.svg/1804px-Gambit_Esports_2020_logo.svg.png" alt="GambytLogo" /></td>
+		<nav>
+			<ul>
+				<li><a href="#create-ticket">Create a Ticket</a></li>
+				<li><a href="#view-tickets">View Tickets</a></li>
+				<li><a href="#inbox">Inbox</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main>
+		<section id="create-ticket">
+      <div id="create-ticket-element">
+        <div id="ticket-form">
+          <h2>Create a Ticket</h2>
+          <form>
+            <label for="job-title">Job Title:</label>
+            <input type="text" id="job-title" name="job-title" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+            <div id="date-and-priority">
+              <div>
+                <label for="due-date">Due Date:</label>
+                <input type="date" id="due-date" name="due-date" required>
+              </div>
+              <div>
+                <label for="priority">Priority:</label>
+                <select id="priority" name="priority" required>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+              <div>
+                <label for="status">Status:</label>
+                <select id="status" name="status" required>
+                  <option value="high">To-Do</option>
+                  <option value="medium">In Progress</option>
+                  <option value="low">Complete</option>
+                </select>
+              </div>
+            </div>
+
+            <label for="assigner">Assigner:</label>
+            <input type="text" id="assigner" name="assigner" required>
+
+            <label for="assignee">Assignee:</label>
+            <input type="text" id="assignee" name="assignee" required>
+
+            <button type="submit">Create Ticket</button>
+          </form>
+        </div>
+      </div>
+      
+		</section>
+		<section id="view-tickets">
+  <h2>View Tickets</h2>
+  <form id="ticket-filter">
+    <div id="ticket-filter-inputs">
+      <div>
+        <label for="filter-by">Filter By:</label>
+        <select id="filter-by" name="filter-by">
+          <option value="job-title">Job Title</option>
+          <option value="priority">Priority</option>
+          <option value="assigner">Assigner</option>
+          <option value="assignee">Assignee</option>
+          <option value="status">Status</option>
+        </select>
+      </div>
+      <div>
+        <label for="filter-value">Filter Value:</label>
+        <input type="text" id="filter-value" name="filter-value">
+      </div>
+    </div>
+  <button type="submit">Apply Filter</button>
+  </form>
+      
+  <div class="ticket">
+    <div class="ticket-title">Ticket Title</div>
+    <div class="ticket-description">This is a ticket with a really long description. This is a ticket with a really long description. This is a ticket with a really long description. This is a ticket with a really long description. This is a ticket with a really long description. This is a ticket with a really long description. This is a ticket with a really long description. This is a ticket with a really long description. This is a ticket with a really long description. This is a ticket with a really long description.         </div>
+    <div class="ticket-info">
+      <div class="date"><strong>Date:</strong> 1/1/2023</div>
+      <div class="priority"><strong>Priority:</strong> High</div>
+    </div>
+    <div class="ticket-info">
+      <div class="assigner"><strong>Assigner:</strong> John Doe</div>
+      <div class="assignee"><strong>Assignee:</strong> Jane Smith</div>
+    </div>
+    <div class="ticket-info">
+      <div class="status"><strong>Status:</strong> To-Do</div>
+    </div>
+    <div class="ticket-buttons">
+      <button class="edit">Edit</button>
+      <button class="delete">Delete</button>
+    </div>
+    <div class="ticket-buttons">
+      <button class="subscribe">Subscribe</button>
+      <button class="claim">Claim</button>
+    </div>
+  </div>
+  <div class="ticket">
+    <div class="ticket-title">Ticket Title</div>
+    <div class="ticket-description">Ticket Description</div>
+    <div class="ticket-info">
+      <div class="date"><strong>Date:</strong> 1/1/2023</div>
+      <div class="priority"><strong>Priority:</strong> High</div>
+    </div>
+    <div class="ticket-info">
+      <div class="assigner"><strong>Assigner:</strong> John Doe</div>
+      <div class="assignee"><strong>Assignee:</strong> Jane Smith</div>
+    </div>
+    <div class="ticket-info">
+      <div class="status"><strong>Status:</strong> To-Do</div>
+    </div>
+    <div class="ticket-buttons">
+      <button class="edit">Edit</button>
+      <button class="delete">Delete</button>
+    </div>
+    <div class="ticket-buttons">
+      <button class="subscribe">Subscribe</button>
+      <button class="claim">Claim</button>
+    </div>
+  </div>
+
+      
+        
+</section>
+		<section id="inbox">
+			<h2>Inbox</h2>
+			<div class="inbox-item">
+        <div class="ticket-title">Ticket Title</div>
+        <div class="ticket-description">The status of this ticket has been changed to complete.</div>
+        
+        <div class="ticket-buttons">
+          <button class="edit">View Ticket</button>
+          <button class="delete">Delete</button>
+        </div>
+      </div>
+		</section>
+	</main>
+	<footer>
+	</footer>
+</body>
+</html>
