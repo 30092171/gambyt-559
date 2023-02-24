@@ -5,13 +5,13 @@ import java.util.HashMap;
 
 public interface RemoteFrontend extends Remote{
 
-    public String newTicket(String userId) throws RemoteException;
+    public void newTicket(String tID, Ticket ticket) throws RemoteException;
 
     public void deleteTicket(String tID) throws RemoteException;
 
     public ArrayList<String> getUserInbox(String userID) throws RemoteException;
 
-    public void updateTicket(String tID) throws RemoteException;
+    public void updateTicket(String tID, Ticket ticket) throws RemoteException;
 
     public void clearUserInbox(String userID) throws RemoteException;
 
