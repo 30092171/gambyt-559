@@ -18,9 +18,16 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		this.database = new Database(path);
 	}
 
+	// TO-DO
 	public String newTicket(String userId) {
 		String tID = generateTicketID();
 
+		try {
+			database.saveJSON(pathToData);
+		}
+		catch (IOException e) {
+			System.out.println("Failed to add ticket due to the following exception:" + e.getMessage());
+		}
 		return "";
 	}
 
@@ -28,14 +35,28 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		String tName = database.getTicket(tID).name;
 		database.removeTicket(tID);
 		database.notifySubscribers(tID, "Ticket " + tID + ": " + tName + " has been deleted.");
+		try {
+			database.saveJSON(pathToData);
+		}
+		catch (IOException e) {
+			System.out.println("Failed to delete ticket due to the following exception:" + e.getMessage());
+		}
 	}
 
 	public ArrayList<String> getUserInbox(String userID) {
 		return database.getInboxes().get(userID);
 	}
 
+	// TO-DO
 	public void updateTicket(String tID) {
+		Ticket ticket = database.getTicket(tID);
 
+		try {
+			database.saveJSON(pathToData);
+		}
+		catch (IOException e) {
+			System.out.println("Failed to update ticket due to the following exception:" + e.getMessage());
+		}
 	}
 
 	public void clearUserInbox(String userID) {
