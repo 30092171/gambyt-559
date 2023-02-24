@@ -3,6 +3,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 /*
 	Remote object to be called from Proxy (client). Handles logic between proxy
@@ -14,11 +15,11 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 
 	public FrontendImpl(String path) throws RemoteException {
 		setPathToData(path);
-		this.database = new Database();
+		this.database = new Database(path);
 	}
 
 	public String newTicket(String userId) {
-
+		String tID = generateTicketID();
 
 		return "";
 	}
@@ -72,6 +73,11 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 			ticketMap.put(tIDs.get(i), tickets.get(i));
 		}
 		return ticketMap;
+	}
+
+	private String generateTicketID() {
+		// From: https://blog.devgenius.io/7-famous-approaches-to-generate-distributed-id-with-comparison-table-af89afe4601f
+		return UUID.randomUUID().toString().replaceAll("-","");
 	}
 
 	public String getPathToData() {
