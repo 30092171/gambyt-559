@@ -1,3 +1,6 @@
+package gambyt.backend;
+
+import java.io.Serializable;
 import java.util.ArrayList; // import the ArrayList class
 
 
@@ -5,7 +8,7 @@ import java.util.ArrayList; // import the ArrayList class
  * Object to represent a Ticket
  *
  */
-public class Ticket {
+public class Ticket implements Serializable {
 
 	public String name = "";
 	public long assignee = -1; //id of user who has been assigned the ticket (-1 means unassigned)

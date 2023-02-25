@@ -1,6 +1,7 @@
+package gambyt.backend;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -9,7 +10,7 @@ import java.util.UUID;
 	Remote object to be called from Proxy (client). Handles logic between proxy
 	requests and database queries.
  */
-public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend {
+public class FrontendImpl implements RemoteFrontend {
 	private String pathToData;
 	private Database database;
 
@@ -20,6 +21,7 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 
 	public void newTicket(String tID, Ticket ticket) {
 		database.addTicket(tID, ticket);
+		database.notifySubscribers(tID, "Ticket " + tID + ": " + ticket.name + " has been added.");
 		try {
 			database.saveJSON(pathToData);
 		}
@@ -30,8 +32,8 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 
 	public void deleteTicket(String tID) {
 		String tName = database.getTicket(tID).name;
-		database.removeTicket(tID);
 		database.notifySubscribers(tID, "Ticket " + tID + ": " + tName + " has been deleted.");
+		database.removeTicket(tID);
 		try {
 			database.saveJSON(pathToData);
 		}
@@ -47,6 +49,7 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 	public void updateTicket(String tID, Ticket ticket) {
 		database.replaceTicket(tID, ticket);
 
+		database.notifySubscribers(tID, "Ticket " + tID + ": " + ticket.name + " has been updated.");
 		try {
 			database.saveJSON(pathToData);
 		}

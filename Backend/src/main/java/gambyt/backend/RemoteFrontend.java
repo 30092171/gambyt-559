@@ -1,9 +1,12 @@
+package gambyt.backend;
+
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public interface RemoteFrontend extends Remote{
+public interface RemoteFrontend extends Remote {
 
     public void newTicket(String tID, Ticket ticket) throws RemoteException;
 
