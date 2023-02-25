@@ -12,7 +12,7 @@ import org.json.simple.parser.ParseException;
 /*
     Tester class for client-server interaction.
  */
-public class Main {
+public class TestClass {
 
 //Left this here as an example of how to use the database
 	public static void main(String[] args) throws ParseException, FileNotFoundException, IOException {

@@ -2,6 +2,7 @@ package gambyt.backend;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -10,7 +11,7 @@ import java.util.UUID;
 	Remote object to be called from Proxy (client). Handles logic between proxy
 	requests and database queries.
  */
-public class FrontendImpl implements RemoteFrontend {
+public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend {
 	private String pathToData;
 	private Database database;
 
@@ -19,7 +20,8 @@ public class FrontendImpl implements RemoteFrontend {
 		this.database = new Database(path);
 	}
 
-	public void newTicket(String tID, Ticket ticket) {
+	public void newTicket(Ticket ticket) {
+		String tID = generateTicketID();
 		database.addTicket(tID, ticket);
 		database.notifySubscribers(tID, "Ticket " + tID + ": " + ticket.name + " has been added.");
 		try {
