@@ -1,5 +1,8 @@
 package gambyt.proxy.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import gambyt.*;
@@ -32,9 +35,14 @@ public class TaskController {
 		return tickets.toString();
 	}
 
-	@PostMapping("/new")
-	public void addNewTask() {
+	@PostMapping(path = "",
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> addNewTask(@RequestBody Ticket nt) throws RemoteException {
 		// Endpoint to add new task
+		nt.PrintTicketInfo();
+		String tID = server.newTicket("bruh");
+		server.getDatabase().addTicket(tID, nt);
+		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
 	@PutMapping("/{id}")
