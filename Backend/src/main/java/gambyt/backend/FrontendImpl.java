@@ -20,7 +20,7 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		this.database = new Database(path);
 	}
 
-	public void newTicket(Ticket ticket) {
+	public String newTicket(Ticket ticket) {
 		String tID = generateTicketID();
 		database.addTicket(tID, ticket);
 		database.notifySubscribers(tID, "Ticket " + tID + ": " + ticket.name + " has been added.");
@@ -30,6 +30,7 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		catch (IOException e) {
 			System.out.println("Failed to add ticket due to the following exception:" + e.getMessage());
 		}
+		return tID;
 	}
 
 	public void deleteTicket(String tID) {
