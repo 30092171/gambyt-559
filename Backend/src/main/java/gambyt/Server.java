@@ -1,3 +1,4 @@
+package gambyt;
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -15,10 +16,10 @@ public class Server {
             // RemoteFrontend stub = (RemoteFrontend) UnicastRemoteObject.exportObject(front, 0);
 
             // Create registry local to server on port 1099 (default port)
-            // Registry registry = LocateRegistry.createRegistry(1099);
+            Registry registry = LocateRegistry.createRegistry(1099);
 
-            Naming.rebind("FrontendImpl", front);
-
+            //Naming.rebind("FrontendImpl", front);
+            registry.bind("FrontendImpl", front);
         }
         catch (Exception e) {
             System.out.println("Exception occurred while running server: " + e.toString());
