@@ -12,8 +12,8 @@
 		<nav>
 			<ul>
 				<li><a href="#create-ticket">Create a Ticket</a></li>
-				<li><a href="#view-tickets">View Tickets</a></li>
-				<li><a href="#inbox">Inbox</a></li>
+				<li><a href="#view-tickets" id="all-tickets">View Tickets</a></li>
+				<li><a href="#inbox" id="my-inbox">Inbox</a></li>
 			</ul>
 		</nav>
 	</header>
@@ -57,7 +57,7 @@
             <label for="assignee">Assignee:</label>
             <input type="text" id="assignee" name="assignee" required>
 
-            <button type="submit">Create Ticket</button>
+            <button type="submit" id="submitTicket">Create Ticket</button>
           </form>
         </div>
       </div>
@@ -84,11 +84,11 @@
     </div>
   <button type="submit">Apply Filter</button>
   </form>
-  <div id="tickets-container">
-  </div>
 
-      
-        
+  <div id="tickets-container">
+
+  </div>
+  
 </section>
 		<section id="inbox">
 			<h2>Inbox</h2>
@@ -98,7 +98,7 @@
         
         <div class="ticket-buttons">
           <button class="edit">View Ticket</button>
-          <button class="delete">Delete</button>
+          <button class="delete" id="unsubscribe">Delete</button>
         </div>
       </div>
 		</section>
