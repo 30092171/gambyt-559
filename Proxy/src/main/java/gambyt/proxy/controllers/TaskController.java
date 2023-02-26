@@ -19,15 +19,7 @@ public class TaskController {
 	private RemoteFrontend server;
 
 	public TaskController() {
-		try {
-			String url = "rmi://localhost/";
-			server = (RemoteFrontend) Naming.lookup(url + "FrontendImpl");
-			System.out.println("RMI Lookup Success");
-			System.out.println("Remote FS location: " + server.getPathToData());
-		} catch (Exception e) {
-			System.out.println("Exception occurred while running client: " + e.toString());
-			e.printStackTrace();
-		}
+		server = RMIInstance.getInstance();
 	}
 
 	@GetMapping("")
