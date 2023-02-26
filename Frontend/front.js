@@ -1,3 +1,4 @@
+const baseURL = '127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
 const userID = 123;
 
 var json = {
@@ -56,7 +57,7 @@ function displayJson(jsonData) {
     }
 
     const html = `
-      <div class="ticket">
+      <div class="ticket" id="${ticketId}">
         <div class="ticket-title">${ticket.name}</div>
         <div class="ticket-description">${ticket.description}</div>
         <div class="ticket-info">
@@ -68,12 +69,12 @@ function displayJson(jsonData) {
           <div class="status"><strong>Status:</strong> ${status_value}</div>
         </div>
         <div class="ticket-buttons">
-          <button class="edit">Edit</button>
-          <button class="delete">Delete</button>
+          <button class="edit" id="edit">Edit</button>
+          <button class="delete deleteTicket" id="deleteTicket">Delete</button>
         </div>
         <div class="ticket-buttons">
-          <button class="subscribe">Subscribe</button>
-          <button class="claim">Claim</button>
+          <button class="subscribe" id="subscribe">Subscribe</button>
+          <button class="claim" id="claim">Claim</button>
         </div>
       </div>
     `;
@@ -95,14 +96,7 @@ const createTicketSection = document.getElementById("create-ticket");
 const viewTicketsSection = document.getElementById("view-tickets");
 const inboxSection = document.getElementById("inbox");
 
-// Get the elements for REST API calls
-const myInbox = document.getElementById("my-inbox");
-const allTickets = document.getElementById("all-tickets");
-const createNewTicket = document.getElementById("submitTicket");
-const unsubscribe = document.getElementById("unsubscribe");
-const subscribe = document.getElementById("subscribe");
-const del = document.getElementById("deleteTicket");
-const claim = document.getElementById("claim");
+
 
 // Get the menu items
 const createTicketLink = document.querySelector("a[href='#create-ticket']");
@@ -141,18 +135,49 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log("Page should have loaded");
   const jsonData = '{"tickets": {"100": {"name": "Super-Ticket","assignee": 0,"status": 0,"subscribers": ["0", "10", "2", "3"],"description": "Hello World!","date_assigned": "2023-02-15","priority": 0},"618": {"name": "Super Lame Ticket","assignee": 10,"status": 2,"subscribers": [],"description": "This ticket sucks","date_assigned": "2023-02-04","priority": 2}},"inbox": {"0": ["Hello", "World!", "Boo"],"1": ["Leave me Here", "F-Society"]}}';
   displayJson(jsonData);
+
+  // Get the elements for REST API calls
+  const myInbox = document.getElementById("my-inbox");
+  const allTickets = document.getElementById("all-tickets");
+  const createNewTicket = document.getElementById("submitTicket");
+
+  const subscribe = document.getElementsByClassName("subscribe");
+  const unsubscribe = document.getElementsByClassName("unsubscribe");
+  const del = document.getElementsByClassName("deleteTicket");
+  const claim = document.getElementsByClassName("claim");
+
+  // Add listeners
+  myInbox.addEventListener('click', getInbox);
+  allTickets.addEventListener('click', getTickets);
+  createNewTicket.addEventListener('click', postTicket);
+
+  for (var i = 0; i < subscribe.length; i++) {
+    subscribe[i].addEventListener('click', subTicket);
+  }
+  for (var i = 0; i < unsubscribe.length; i++) {
+    unsubscribe[i].addEventListener('click', unsubTicket);
+  }
+  for (var i = 0; i < del.length; i++) {
+    del[i].addEventListener('click', deleteTicket);
+  }
+  for (var i = 0; i < claim.length; i++) {
+    claim[i].addEventListener('click', deleteTicket);
+  }
 });
 
-// Add listeners
-myInbox.addEventListener('click', getInbox);
-allTickets.addEventListener('click', getTickets);
-createNewTicket.addEventListener('click', postTicket);
-unsubscribe.addEventListener('click', unsubTicket);
-subscribe.addEventListener('click', subTicket);
-del.addEventListener('click', deleteTicket);
-claim.addEventListener('click', claimTicket);
 
-const baseURL = '127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
+
+
+
+// // Get the elements for REST API calls
+// const myInbox = document.getElementById("my-inbox");
+// const allTickets = document.getElementById("all-tickets");
+// const createNewTicket = document.getElementById("submitTicket");
+// const subscribe = document.getElementById("subscribe");
+// const unsubscribe = document.getElementById("unsubscribe");
+// const del = document.getElementById("deleteTicket");
+// const claim = document.getElementById("claim");
+
 
 // Functions
 
@@ -166,9 +191,10 @@ function getInbox() {
     .catch(error => console.error(error));
 }
 
-function getTickers() {
+function getTickets() {
   const path = '/tasks';
   const url = baseURL + path;
+
 
   fetch(url)
     .then(response => response.json())
@@ -213,6 +239,7 @@ function unsubTicket(event) {
 }
 
 function subTicket(event) {
+  var ticketID = event.srcElement.parentNode.parentNode.id;
   event.preventDefault();
   const form = event.target;
   const formData = new FormData(form);
