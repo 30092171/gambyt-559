@@ -79,4 +79,20 @@ public class TaskController {
 		});
 		return wrapper;
 	}
+	
+	@GetMapping("/unassigned")
+	public JSONObject getAllUnassigned() throws RemoteException {
+//        Endpoint to return all tickets
+		HashMap<String, Ticket> tickets = server.getAllUnassigned();
+		JSONObject wrapper = new JSONObject();
+		JSONArray array = new JSONArray();
+		wrapper.put("tickets", array);
+		tickets.forEach((tID, tic) -> {
+			JSONObject ticpair = new JSONObject();
+			ticpair.put("id", tID);
+			ticpair.put("ticket", tic);
+			array.add(ticpair);
+		});
+		return wrapper;
+	}
 }
