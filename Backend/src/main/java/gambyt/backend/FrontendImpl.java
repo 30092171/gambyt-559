@@ -1,4 +1,5 @@
-package gambyt;
+package gambyt.backend;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -19,23 +20,23 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		this.database = new Database(path);
 	}
 
-	// TO-DO
-	public String newTicket(String userId) {
+	public String newTicket(Ticket ticket) {
 		String tID = generateTicketID();
-
+		database.addTicket(tID, ticket);
+		database.notifySubscribers(tID, "Ticket " + tID + ": " + ticket.name + " has been added.");
 		try {
 			database.saveJSON(pathToData);
 		}
 		catch (IOException e) {
 			System.out.println("Failed to add ticket due to the following exception:" + e.getMessage());
 		}
-		return "";
+		return tID;
 	}
 
 	public void deleteTicket(String tID) {
 		String tName = database.getTicket(tID).name;
-		database.removeTicket(tID);
 		database.notifySubscribers(tID, "Ticket " + tID + ": " + tName + " has been deleted.");
+		database.removeTicket(tID);
 		try {
 			database.saveJSON(pathToData);
 		}
@@ -48,10 +49,10 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		return database.getInboxes().get(userID);
 	}
 
-	// TO-DO
-	public void updateTicket(String tID) {
-		Ticket ticket = database.getTicket(tID);
+	public void updateTicket(String tID, Ticket ticket) {
+		database.replaceTicket(tID, ticket);
 
+		database.notifySubscribers(tID, "Ticket " + tID + ": " + ticket.name + " has been updated.");
 		try {
 			database.saveJSON(pathToData);
 		}

@@ -1,20 +1,15 @@
-package gambyt;
+package gambyt.backend;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap; // import the HashMap class
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Serializable;
 import java.util.Iterator;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import java.io.FileWriter;
 
 /**
  * https://www.digitalocean.com/community/tutorials/json-simple-example
