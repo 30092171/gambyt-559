@@ -24,6 +24,8 @@ public interface RemoteFrontend extends Remote {
 
     public HashMap<String, Ticket> getAllUnassigned() throws RemoteException;
 
+    public Ticket getTicket(String tID) throws RemoteException;
+    
     public String getPathToData() throws RemoteException;
 
     public void setPathToData(String pathToData) throws RemoteException;

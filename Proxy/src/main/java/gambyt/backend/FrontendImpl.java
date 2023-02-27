@@ -97,6 +97,10 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		}
 		return ticketMap;
 	}
+	
+	public Ticket getTicket(String tID) {
+		return database.getTicket(tID);
+	}
 
 	private String generateTicketID() {
 		// From: https://blog.devgenius.io/7-famous-approaches-to-generate-distributed-id-with-comparison-table-af89afe4601f
