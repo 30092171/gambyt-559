@@ -198,13 +198,18 @@ function getTickets() {
 
   fetch(url)
     .then(response => response.json())
-    .then(data => console.log(data)) // Do stuff with response
+    .then(data => 
+      {
+        console.log(data);
+      }) // Do stuff with response
     .catch(error => console.error(error));
 }
 
 function postTicket(event) {
+  console.log("Post ticket called");
   event.preventDefault();
-  const form = event.target;
+  const form = event.target.parentNode;
+  console.log(form)
   const formData = new FormData(form);
   const path = '/tasks';
   const url = baseURL + path;
@@ -213,6 +218,7 @@ function postTicket(event) {
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(Object.fromEntries(formData))
   };
+  console.log(options);
 
   fetch(url, options)
     .then(response => response.json())
@@ -280,11 +286,13 @@ function deleteTicket() {
   const path = '/tasks/${ticketID}';
   const url = baseURL + path;
   const options = {
-    method: 'DELETE',
+    method: 'DELETE'
   };
 
   fetch(url, options)
-    .then(response => response.json())
+    .then(response => {
+      response.json();
+    })
     .then(data => console.log(data)) // Do Stuff with response
     .catch(error => console.error(error));
 }
