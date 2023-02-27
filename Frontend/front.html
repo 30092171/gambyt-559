@@ -2,13 +2,14 @@
 <html>
 <head>
 	<title>Gambyt Solutions</title>
+  <link rel="icon" href="image/x-icon" href="./assets/favicon.ico">
   <link rel="stylesheet" type="text/css" href="front.css">
 
 </head>
 <body>
 	<header>
 		<h1>Gambyt Solutions</h1>
-    <td><img style="width: 100px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Gambit_Esports_2020_logo.svg/1804px-Gambit_Esports_2020_logo.svg.png" alt="GambytLogo" /></td>
+    <td><img style="width: 100px;" src="./assets/Gambit.png" alt="GambytLogo" /></td>
 		<nav>
 			<ul>
 				<li><a href="#create-ticket">Create a Ticket</a></li>
@@ -23,30 +24,30 @@
         <div id="ticket-form">
           <h2>Create a Ticket</h2>
           <form>
-            <label for="job-title">Job Title:</label>
-            <input type="text" id="job-title" name="job-title" required>
+            <label for="name">Job Title:</label>
+            <input type="text" id="job-title" name="name" required>
 
             <label for="description">Description:</label>
             <textarea id="description" name="description" required></textarea>
             <div id="date-and-priority">
               <div>
-                <label for="due-date">Due Date:</label>
-                <input type="date" id="due-date" name="due-date" required>
+                <label for="dateAssigned">Due Date:</label>
+                <input type="date" id="due-date" name="dateAssigned" required>
               </div>
               <div>
                 <label for="priority">Priority:</label>
                 <select id="priority" name="priority" required>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
+                  <option value="2">High</option>
+                  <option value="1">Medium</option>
+                  <option value="0">Low</option>
                 </select>
               </div>
               <div>
                 <label for="status">Status:</label>
                 <select id="status" name="status" required>
-                  <option value="high">To-Do</option>
-                  <option value="medium">In Progress</option>
-                  <option value="low">Complete</option>
+                  <option value="0">To-Do</option>
+                  <option value="1">In Progress</option>
+                  <option value="2">Complete</option>
                 </select>
               </div>
             </div>

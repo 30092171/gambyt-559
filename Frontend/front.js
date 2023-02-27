@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const claim = document.getElementsByClassName("claim");
 
   // Add listeners
-  myInbox.addEventListener('click', getInbox);
+  // myInbox.addEventListener('click', getInbox);
   allTickets.addEventListener('click', getTickets);
   createNewTicket.addEventListener('click', postTicket);
 
@@ -168,15 +168,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Functions
 
-function getInbox(event) {
-  const path = '/inbox/${userID}';
-  const url = baseURL + path;
+// function getInbox(event) {
+//   const path = '/inbox/${userID}';
+//   const url = baseURL + path;
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => console.log(data)) // DO stuff with Response
-    .catch(error => console.error(error));
-}
+//   fetch(url)
+//     .then(response => response.json())
+//     .then(data => console.log(data)) // DO stuff with Response
+//     .catch(error => console.error(error));
+// }
 
 function getTickets(event) {
   const path = '/tasks';
