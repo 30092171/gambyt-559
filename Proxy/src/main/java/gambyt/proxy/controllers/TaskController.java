@@ -68,6 +68,7 @@ public class TaskController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteTask(@PathVariable("id") String tID) throws RemoteException {
 //        Endpoint to delete a task by id
+		System.out.println("Trying to delete ticket");
 		server.deleteTicket(tID);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}

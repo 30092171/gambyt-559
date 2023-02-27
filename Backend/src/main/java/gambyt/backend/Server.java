@@ -9,7 +9,8 @@ public class Server {
     public static void main(String args[]) {
         try {
             // Change path to the actual database post-testing
-            RemoteFrontend front = new FrontendImpl("src/JSON_Test.json");
+            RemoteFrontend front = new FrontendImpl("Backend/src/JSON_Test.json");
+//            RemoteFrontend front = new FrontendImpl("src/JSON_Test.json");
 
             // Create stub for remote object. Port 0 indicates port decided dynamically.
             // RemoteFrontend stub = (RemoteFrontend) UnicastRemoteObject.exportObject(front, 0);
