@@ -23,7 +23,8 @@ public class TaskController {
 		server = RMIInstance.getInstance();
 	}
 
-	
+
+	@CrossOrigin(origins = "*")
 	@GetMapping("")
 	public JSONObject getAllTasks() throws RemoteException {
 //        Endpoint to return all tickets
@@ -43,7 +44,8 @@ public class TaskController {
 		return wrapper;
 	}
 
-	@PostMapping(path = "/new",
+	@CrossOrigin(origins = "*")
+	@PostMapping(path = "",
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addNewTask(@RequestBody Ticket nt) throws RemoteException {
 		// Endpoint to add new task
@@ -53,6 +55,7 @@ public class TaskController {
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
+	@CrossOrigin(origins = "*")
 	@PutMapping("/{id}")
 	public ResponseEntity<String> updateTask(@PathVariable("id") String tID, @RequestBody Ticket ut) throws RemoteException {
 //    Endpoint to update a given ticket by its id
@@ -61,6 +64,7 @@ public class TaskController {
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
+	@CrossOrigin(origins = "*")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteTask(@PathVariable("id") String tID) throws RemoteException {
 //        Endpoint to delete a task by id
@@ -78,6 +82,7 @@ public class TaskController {
 
 	}
 
+	@CrossOrigin(origins = "*")
 	@GetMapping("/user/{id}")
 	public JSONObject getUserTasks(@PathVariable("id") long id) throws RemoteException {
 //        Endpoint to get all of a specific users tasks
@@ -97,7 +102,8 @@ public class TaskController {
 		}
 		return wrapper;
 	}
-	
+
+	@CrossOrigin(origins = "*")
 	@GetMapping("/unassigned")
 	public JSONObject getAllUnassigned() throws RemoteException {
 //        Endpoint to return all tickets

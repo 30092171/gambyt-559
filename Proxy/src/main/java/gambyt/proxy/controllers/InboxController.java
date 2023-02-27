@@ -18,12 +18,14 @@ public class InboxController {
 		server = RMIInstance.getInstance();
 	}
 
+	@CrossOrigin(origins = "*")
 	@GetMapping("/{id}")
 	public ArrayList<String> getUserInbox(@PathVariable("id") String uID) throws RemoteException {
 		ArrayList<String> inbox = server.getUserInbox(uID);
 		return inbox;
 	}
 
+	@CrossOrigin(origins = "*")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> clearUserInbox(@PathVariable("id") String uID) throws RemoteException {
 		server.clearUserInbox(uID);

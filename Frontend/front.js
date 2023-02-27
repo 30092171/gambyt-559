@@ -1,4 +1,4 @@
-const baseURL = '127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
+const baseURL = 'http://127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
 const userID = 123;
 
 var json = {
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const claim = document.getElementsByClassName("claim");
 
   // Add listeners
-  myInbox.addEventListener('click', getInbox);
+  // myInbox.addEventListener('click', getInbox);
   allTickets.addEventListener('click', getTickets);
   createNewTicket.addEventListener('click', postTicket);
 
@@ -166,32 +166,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
-
-
-// // Get the elements for REST API calls
-// const myInbox = document.getElementById("my-inbox");
-// const allTickets = document.getElementById("all-tickets");
-// const createNewTicket = document.getElementById("submitTicket");
-// const subscribe = document.getElementById("subscribe");
-// const unsubscribe = document.getElementById("unsubscribe");
-// const del = document.getElementById("deleteTicket");
-// const claim = document.getElementById("claim");
-
-
 // Functions
 
-function getInbox() {
-  const path = '/inbox/${userID}';
-  const url = baseURL + path;
+// function getInbox(event) {
+//   const path = '/inbox/${userID}';
+//   const url = baseURL + path;
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => console.log(data)) // DO stuff with Response
-    .catch(error => console.error(error));
-}
+//   fetch(url)
+//     .then(response => response.json())
+//     .then(data => console.log(data)) // DO stuff with Response
+//     .catch(error => console.error(error));
+// }
 
-function getTickets() {
+function getTickets(event) {
   const path = '/tasks';
   const url = baseURL + path;
 
@@ -226,29 +213,24 @@ function postTicket(event) {
     .catch(error => console.error(error));
 }
 
-function unsubTicket(event) {
-  event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
-  const path = '/tasks/${ticketID}';
-  const url = baseURL + path;
-  const options = {
-    method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(Object.fromEntries(formData))
-  };
+// function unsubTicket() {
+//   //  Need to get ticket ID from inbox for ticket
+//   const path = '/tasks/${ticketID}';
+//   const url = baseURL + path;
+//   const options = {
+//     method: 'PUT',
+//     headers: {'Content-Type': 'application/json'},
+//     body: JSON.stringify(Object.fromEntries(formData))
+//   };
 
-  fetch(url, options)
-    .then(response => response.json())
-    .then(data => console.log(data)) // Do Stuff with response
-    .catch(error => console.error(error));
-}
+//   fetch(url, options)
+//     .then(response => response.json())
+//     .then(data => console.log(data)) // Do Stuff with response
+//     .catch(error => console.error(error));
+// }
 
 function subTicket(event) {
   var ticketID = event.srcElement.parentNode.parentNode.id;
-  event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
   const path = '/tasks/${ticketID}';
   const url = baseURL + path;
   const options = {
@@ -264,7 +246,8 @@ function subTicket(event) {
 }
 
 // THis one may need to be changed, No form really for this one. Will just need user id and ticket id
-function claimTicket() {
+function claimTicket(event) {
+  var ticketID = event.srcElement.parentNode.parentNode.id;
   const claimData = {
     assignee: '${userID}'
   };
@@ -282,7 +265,9 @@ function claimTicket() {
     .catch(error => console.error(error));
 }
 
-function deleteTicket() {
+function deleteTicket(event) {
+  var ticketID = event.srcElement.parentNode.parentNode.id;
+
   const path = '/tasks/${ticketID}';
   const url = baseURL + path;
   const options = {
