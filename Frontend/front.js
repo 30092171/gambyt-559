@@ -34,7 +34,8 @@ function displayJson(jsonData) {
 
   // Parse the JSON data and get the tickets object
   const data = JSON.parse(jsonData);
-  const tickets = data.tickets;
+  const tickets = data;
+
 
   // Loop through the tickets object and generate HTML code for each ticket
   for (const ticketId in tickets) {
@@ -133,7 +134,8 @@ inboxLink.addEventListener("click", function(event) {
 
 document.addEventListener('DOMContentLoaded', function() {
   console.log("Page should have loaded");
-  const jsonData = '{"tickets": {"100": {"name": "Super-Ticket","assignee": 0,"status": 0,"subscribers": ["0", "10", "2", "3"],"description": "Hello World!","date_assigned": "2023-02-15","priority": 0},"618": {"name": "Super Lame Ticket","assignee": 10,"status": 2,"subscribers": [],"description": "This ticket sucks","date_assigned": "2023-02-04","priority": 2}},"inbox": {"0": ["Hello", "World!", "Boo"],"1": ["Leave me Here", "F-Society"]}}';
+  const jsonData = '{"0":{"name":"Joshies First Task","assignee":7,"status":1,"subscribers":[],"description":"Make a thing","dateAssigned":"2023-02-24","priority":1},"2":{"name":"Dynamic Ticket","assignee":20,"status":1,"subscribers":["1","2","3","20"],"description":"This ticket was updated!","dateAssigned":"2023-02-04","priority":0},"618":{"name":"Super Lame Ticket","assignee":10,"status":2,"subscribers":[],"description":"This ticket sucks","dateAssigned":"2023-02-04","priority":2},"6b02d43a720849cf8988a124e37c4189":{"name":"test2","assignee":1234,"status":0,"subscribers":["1","2","3"],"description":"this ticket sucks more","dateAssigned":"1997-01-01","priority":1},"ee3f6013b6674071ac616aaca0780ccb":{"name":"test3","assignee":1234,"status":0,"subscribers":[],"description":"this ticket sucks more","dateAssigned":"1997-01-01","priority":1},"80623425fc01491093ee7400c1c9e8e2":{"name":"Gregs Test","assignee":1234,"status":0,"subscribers":[],"description":"desc","dateAssigned":"2023-02-27","priority":2},"aa5b81d6dbc7436083740820eb9a75d0":{"name":"Gregs Test","assignee":1234,"status":0,"subscribers":[],"description":"desc","dateAssigned":"2023-02-27","priority":2},"1b673f7abd4c41c983fadc8d1c4d2ff0":{"name":"test","assignee":1234,"status":0,"subscribers":["1","2","3"],"description":"this ticket sucks more","dateAssigned":"1997-01-01","priority":1},"c45826299bc14b78b0a1bde49a1d7d79":{"name":"test","assignee":1234,"status":0,"subscribers":["1","2","3"],"description":"this ticket sucks more","dateAssigned":"1997-01-01","priority":1},"aafb471ef2b54fe4823778c3bcbac907":{"name":"This is my Second Test","assignee":431,"status":2,"subscribers":[],"description":"Pls work Pls","dateAssigned":"2023-02-22","priority":0}}';
+//  const jsonData = '{"tickets": {"100": {"name": "Super-Ticket","assignee": 0,"status": 0,"subscribers": ["0", "10", "2", "3"],"description": "Hello World!","date_assigned": "2023-02-15","priority": 0},"618": {"name": "Super Lame Ticket","assignee": 10,"status": 2,"subscribers": [],"description": "This ticket sucks","date_assigned": "2023-02-04","priority": 2}},"inbox": {"0": ["Hello", "World!", "Boo"],"1": ["Leave me Here", "F-Society"]}}';
   displayJson(jsonData);
 
   // Get the elements for REST API calls
