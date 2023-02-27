@@ -1,4 +1,4 @@
-const baseURL = '127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
+const baseURL = 'http://127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
 const userID = 123;
 
 var json = {
