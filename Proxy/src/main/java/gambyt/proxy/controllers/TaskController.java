@@ -12,6 +12,7 @@ import gambyt.backend.*;
 import java.rmi.*;
 import java.util.HashMap;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/v1/tasks")
 public class TaskController {
@@ -22,19 +23,23 @@ public class TaskController {
 		server = RMIInstance.getInstance();
 	}
 
+	
 	@GetMapping("")
 	public JSONObject getAllTasks() throws RemoteException {
 //        Endpoint to return all tickets
 		HashMap<String, Ticket> tickets = server.getAllTickets();
 		JSONObject wrapper = new JSONObject();
-		JSONArray array = new JSONArray();
-		wrapper.put("tickets", array);
-		tickets.forEach((tID, tic) -> {
-			JSONObject ticpair = new JSONObject();
-			ticpair.put("id", tID);
-			ticpair.put("ticket", tic);
-			array.add(ticpair);
-		});
+//		JSONArray array = new JSONArray();
+//		wrapper.put("tickets", array);
+//		tickets.forEach((tID, tic) -> {
+//			JSONObject ticpair = new JSONObject();
+//			ticpair.put("id", tID);
+//			ticpair.put("ticket", tic);
+//			array.add(ticpair);
+//		});
+		for(String tid : tickets.keySet()) {
+			wrapper.put(tid, tickets.get(tid));
+		}
 		return wrapper;
 	}
 
@@ -69,14 +74,17 @@ public class TaskController {
 		String uID = Long.toString(id);
 		HashMap<String, Ticket> tickets = server.getTicketByUser(uID);
 		JSONObject wrapper = new JSONObject();
-		JSONArray array = new JSONArray();
-		wrapper.put("tickets", array);
-		tickets.forEach((tID, tic) -> {
-			JSONObject ticpair = new JSONObject();
-			ticpair.put("id", tID);
-			ticpair.put("ticket", tic);
-			array.add(ticpair);
-		});
+//		JSONArray array = new JSONArray();
+//		wrapper.put("tickets", array);
+//		tickets.forEach((tID, tic) -> {
+//			JSONObject ticpair = new JSONObject();
+//			ticpair.put("id", tID);
+//			ticpair.put("ticket", tic);
+//			array.add(ticpair);
+//		});
+		for(String tid : tickets.keySet()) {
+			wrapper.put(tid, tickets.get(tid));
+		}
 		return wrapper;
 	}
 	
@@ -85,14 +93,17 @@ public class TaskController {
 //        Endpoint to return all tickets
 		HashMap<String, Ticket> tickets = server.getAllUnassigned();
 		JSONObject wrapper = new JSONObject();
-		JSONArray array = new JSONArray();
-		wrapper.put("tickets", array);
-		tickets.forEach((tID, tic) -> {
-			JSONObject ticpair = new JSONObject();
-			ticpair.put("id", tID);
-			ticpair.put("ticket", tic);
-			array.add(ticpair);
-		});
+//		JSONArray array = new JSONArray();
+//		wrapper.put("tickets", array);
+//		tickets.forEach((tID, tic) -> {
+//			JSONObject ticpair = new JSONObject();
+//			ticpair.put("id", tID);
+//			ticpair.put("ticket", tic);
+//			array.add(ticpair);
+//		});
+		for(String tid : tickets.keySet()) {
+			wrapper.put(tid, tickets.get(tid));
+		}
 		return wrapper;
 	}
 }
