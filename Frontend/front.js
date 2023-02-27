@@ -46,7 +46,7 @@ function displayJson(jsonData) {
         </div>
         <div class="ticket-buttons">
           <button class="edit" id="edit">Edit</button>
-          <button class="delete deleteTicket" id="deleteTicket">Delete</button>
+          <button class="delete deleteTicket" type="button" id="deleteTicket">Delete</button>
         </div>
         <div class="ticket-buttons">
           <button class="subscribe" id="subscribe">Subscribe</button>
@@ -71,8 +71,6 @@ function updateDynamicButtons() {
   del = document.getElementsByClassName("delete deleteTicket");
   claim = document.getElementsByClassName("claim");
 
-  console.log("Number of del buttons:");
-  console.log(del.length);
 
   for (var i = 0; i < subscribe.length; i++) {
     subscribe[i].addEventListener('click', subTicket);
@@ -128,7 +126,7 @@ inboxLink.addEventListener("click", function(event) {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log("Page should have loaded");
+  console.log("DOM loaded");
 
   // const jsonData = '{"tickets": {"100": {"name": "Super-Ticket","assignee": 0,"status": 0,"subscribers": ["0", "10", "2", "3"],"description": "Hello World!","date_assigned": "2023-02-15","priority": 0},"618": {"name": "Super Lame Ticket","assignee": 10,"status": 2,"subscribers": [],"description": "This ticket sucks","date_assigned": "2023-02-04","priority": 2}},"inbox": {"0": ["Hello", "World!", "Boo"],"1": ["Leave me Here", "F-Society"]}}';
   // displayJson(jsonData);
@@ -164,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // }
 
 function getTickets(event) {
-  console.log("Get tickets is being called");
+  event.preventDefault();
   const path = '/tasks';
   const url = baseURL + path;
 
@@ -181,8 +179,8 @@ function getTickets(event) {
 }
 
 function postTicket(event) {
-  console.log("Post ticket called");
   event.preventDefault();
+  console.log("Post ticket called");
   const form = event.target.parentNode;
   console.log(form)
   const formData = new FormData(form);
@@ -221,6 +219,7 @@ function postTicket(event) {
 // }
 
 function subTicket(event) {
+  event.preventDefault();
   var ticketID = event.srcElement.parentNode.parentNode.id;
   const path = '/tasks/${ticketID}';
   const url = baseURL + path;
@@ -238,6 +237,7 @@ function subTicket(event) {
 
 // THis one may need to be changed, No form really for this one. Will just need user id and ticket id
 function claimTicket(event) {
+  event.preventDefault();
   var ticketID = event.srcElement.parentNode.parentNode.id;
   const claimData = {
     assignee: '${userID}'
@@ -256,13 +256,13 @@ function claimTicket(event) {
     .catch(error => console.error(error));
 }
 
+
+
 function deleteTicket(event) {
+  event.preventDefault();
   var ticketID = event.srcElement.parentNode.parentNode.id;
-  console
   console.log("Delete button pressed");
   console.log(ticketID);
-
-
   const path = '/tasks/' + ticketID;
   const url = baseURL + path;
   const options = {
@@ -272,11 +272,10 @@ function deleteTicket(event) {
   console.log(path);
 
   fetch(url, options)
-    .then(response => {
-      response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-      getTickets();
+      getTickets(); 
     }) // Do Stuff with response
     .catch(error => console.error(error));
 }
+
