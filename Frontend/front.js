@@ -187,7 +187,9 @@ function getTickets(event) {
     .then(response => response.json())
     .then(data => 
       {
-        console.log(data);
+        console.log(JSON.stringify(data));
+        clearTickets();
+        displayJson(JSON.stringify(data));
       }) // Do stuff with response
     .catch(error => console.error(error));
 }

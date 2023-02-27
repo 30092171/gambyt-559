@@ -71,7 +71,7 @@ public class TaskController {
 		server.deleteTicket(tID);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
-	
+	@CrossOrigin(origins = "*")
 	@GetMapping("/{id}")
 	public JSONObject getTask(@PathVariable("id") String tID) throws RemoteException {
 //        Endpoint to get a task by id
