@@ -1,6 +1,9 @@
 const baseURL = 'http://127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
 const userID = 123;
 
+window.onload = function() {
+  getTickets();
+}
 
 function displayJson(jsonData) {
   // Get a reference to the element where you want to display the tickets
@@ -70,6 +73,7 @@ function updateDynamicButtons() {
   unsubscribe = document.getElementsByClassName("unsubscribe");
   del = document.getElementsByClassName("delete deleteTicket");
   claim = document.getElementsByClassName("claim");
+  edit = document.getElementsByClassName("edit");
 
 
   for (var i = 0; i < subscribe.length; i++) {
@@ -84,11 +88,16 @@ function updateDynamicButtons() {
   for (var i = 0; i < claim.length; i++) {
     claim[i].addEventListener('click', claimTicket);
   }
+
+  for (var i = 0; i < edit.length; i++) {
+    edit[i].addEventListener('click', displayEdit);
+  }
 }
 
 
 
 // Get the HTML elements to show/hide
+const editTicketSection = document.getElementById("edit-ticket");
 const createTicketSection = document.getElementById("create-ticket");
 const viewTicketsSection = document.getElementById("view-tickets");
 const inboxSection = document.getElementById("inbox");
@@ -99,12 +108,15 @@ const viewTicketsLink = document.querySelector("a[href='#view-tickets']");
 const inboxLink = document.querySelector("a[href='#inbox']");
 
 // Hide all sections except for the Create a Ticket section initially
-viewTicketsSection.style.display = "none";
+createTicketSection.style.display = "none";
+editTicketSection.style.display = "none";
+viewTicketsSection.style.display = "block";
 inboxSection.style.display = "none";
 
 // Attach click event listeners to switch scenes
 createTicketLink.addEventListener("click", function(event) {
   event.preventDefault();
+  editTicketSection.style.display = "none";
   createTicketSection.style.display = "block";
   viewTicketsSection.style.display = "none";
   inboxSection.style.display = "none";
@@ -112,6 +124,7 @@ createTicketLink.addEventListener("click", function(event) {
 
 viewTicketsLink.addEventListener("click", function(event) {
   event.preventDefault();
+  editTicketSection.style.display = "none";
   createTicketSection.style.display = "none";
   viewTicketsSection.style.display = "block";
   inboxSection.style.display = "none";
@@ -119,10 +132,21 @@ viewTicketsLink.addEventListener("click", function(event) {
 
 inboxLink.addEventListener("click", function(event) {
   event.preventDefault();
+  editTicketSection.style.display = "none";
   createTicketSection.style.display = "none";
   viewTicketsSection.style.display = "none";
   inboxSection.style.display = "block";
 });
+
+function displayEdit(event) {
+  event.preventDefault();
+  // Display the edit screen
+  editTicketSection.style.display = "block";
+  createTicketSection.style.display = "none";
+  viewTicketsSection.style.display = "none";
+  inboxSection.style.display = "none";
+  // Prepopulate the information from the ticket
+}
 
 
 document.addEventListener('DOMContentLoaded', function() {
