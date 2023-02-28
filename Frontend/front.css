@@ -78,8 +78,20 @@ form input, form select, form textarea {
   
 }
 
+#edit-ticket-form {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  
+}
+
 
 #create-ticket-element {
+  display: flex;
+  justify-content: center;
+}
+
+#edit-ticket-element {
   display: flex;
   justify-content: center;
 }
