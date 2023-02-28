@@ -12,6 +12,7 @@ import gambyt.backend.*;
 import java.rmi.*;
 import java.util.HashMap;
 
+@SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/v1/tasks")
 public class TaskController {
@@ -22,23 +23,29 @@ public class TaskController {
 		server = RMIInstance.getInstance();
 	}
 
+
+	@CrossOrigin(origins = "*")
 	@GetMapping("")
 	public JSONObject getAllTasks() throws RemoteException {
 //        Endpoint to return all tickets
 		HashMap<String, Ticket> tickets = server.getAllTickets();
 		JSONObject wrapper = new JSONObject();
-		JSONArray array = new JSONArray();
-		wrapper.put("tickets", array);
-		tickets.forEach((tID, tic) -> {
-			JSONObject ticpair = new JSONObject();
-			ticpair.put("id", tID);
-			ticpair.put("ticket", tic);
-			array.add(ticpair);
-		});
+//		JSONArray array = new JSONArray();
+//		wrapper.put("tickets", array);
+//		tickets.forEach((tID, tic) -> {
+//			JSONObject ticpair = new JSONObject();
+//			ticpair.put("id", tID);
+//			ticpair.put("ticket", tic);
+//			array.add(ticpair);
+//		});
+		for(String tid : tickets.keySet()) {
+			wrapper.put(tid, tickets.get(tid));
+		}
 		return wrapper;
 	}
 
-	@PostMapping(path = "/new",
+	@CrossOrigin(origins = "*")
+	@PostMapping(path = "",
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addNewTask(@RequestBody Ticket nt) throws RemoteException {
 		// Endpoint to add new task
@@ -48,6 +55,7 @@ public class TaskController {
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
+	@CrossOrigin(origins = "*")
 	@PutMapping("/{id}")
 	public ResponseEntity<String> updateTask(@PathVariable("id") String tID, @RequestBody Ticket ut) throws RemoteException {
 //    Endpoint to update a given ticket by its id
@@ -56,43 +64,65 @@ public class TaskController {
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
+	@CrossOrigin(origins = "*")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteTask(@PathVariable("id") String tID) throws RemoteException {
 //        Endpoint to delete a task by id
+		System.out.println("Trying to delete ticket");
 		server.deleteTicket(tID);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
+	@CrossOrigin(origins = "*")
+	@GetMapping("/{id}")
+	public JSONObject getTask(@PathVariable("id") String tID) throws RemoteException {
+//        Endpoint to get a task by id
+		Ticket t = server.getTicket(tID);
+		JSONObject wrapper = new JSONObject();
+		wrapper.put(tID, t);
+		return wrapper;
 
+
+	}
+
+
+	@CrossOrigin(origins = "*")
 	@GetMapping("/user/{id}")
 	public JSONObject getUserTasks(@PathVariable("id") long id) throws RemoteException {
 //        Endpoint to get all of a specific users tasks
 		String uID = Long.toString(id);
 		HashMap<String, Ticket> tickets = server.getTicketByUser(uID);
 		JSONObject wrapper = new JSONObject();
-		JSONArray array = new JSONArray();
-		wrapper.put("tickets", array);
-		tickets.forEach((tID, tic) -> {
-			JSONObject ticpair = new JSONObject();
-			ticpair.put("id", tID);
-			ticpair.put("ticket", tic);
-			array.add(ticpair);
-		});
+//		JSONArray array = new JSONArray();
+//		wrapper.put("tickets", array);
+//		tickets.forEach((tID, tic) -> {
+//			JSONObject ticpair = new JSONObject();
+//			ticpair.put("id", tID);
+//			ticpair.put("ticket", tic);
+//			array.add(ticpair);
+//		});
+		for(String tid : tickets.keySet()) {
+			wrapper.put(tid, tickets.get(tid));
+		}
 		return wrapper;
 	}
-	
+
+	@CrossOrigin(origins = "*")
 	@GetMapping("/unassigned")
 	public JSONObject getAllUnassigned() throws RemoteException {
 //        Endpoint to return all tickets
 		HashMap<String, Ticket> tickets = server.getAllUnassigned();
 		JSONObject wrapper = new JSONObject();
-		JSONArray array = new JSONArray();
-		wrapper.put("tickets", array);
-		tickets.forEach((tID, tic) -> {
-			JSONObject ticpair = new JSONObject();
-			ticpair.put("id", tID);
-			ticpair.put("ticket", tic);
-			array.add(ticpair);
-		});
+//		JSONArray array = new JSONArray();
+//		wrapper.put("tickets", array);
+//		tickets.forEach((tID, tic) -> {
+//			JSONObject ticpair = new JSONObject();
+//			ticpair.put("id", tID);
+//			ticpair.put("ticket", tic);
+//			array.add(ticpair);
+//		});
+		for(String tid : tickets.keySet()) {
+			wrapper.put(tid, tickets.get(tid));
+		}
 		return wrapper;
 	}
 }

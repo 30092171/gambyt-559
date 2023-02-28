@@ -1,31 +1,8 @@
-const baseURL = '127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
+const baseURL = 'http://127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
 const userID = 123;
 
-var json = {
-  "tickets": {
-    "100": {
-      "name": "Super-Ticket",
-      "assignee": 0,
-      "status": 0,
-      "subscribers": ["0", "10", "2", "3"],
-      "description": "Hello World!",
-      "date_assigned": "2023-02-15",
-      "priority": 0
-    },
-    "618": {
-      "name": "Super Lame Ticket",
-      "assignee": 10,
-      "status": 2,
-      "subscribers": [],
-      "description": "This ticket sucks",
-      "date_assigned": "2023-02-04",
-      "priority": 2
-    }
-  },
-  "inbox": {
-    "0": ["Hello", "World!", "Boo"],
-    "1": ["Leave me Here", "F-Society"]
-  }
+window.onload = function() {
+  getTickets();
 }
 
 function displayJson(jsonData) {
@@ -34,7 +11,8 @@ function displayJson(jsonData) {
 
   // Parse the JSON data and get the tickets object
   const data = JSON.parse(jsonData);
-  const tickets = data.tickets;
+  const tickets = data;
+
 
   // Loop through the tickets object and generate HTML code for each ticket
   for (const ticketId in tickets) {
@@ -56,12 +34,13 @@ function displayJson(jsonData) {
       status_value = "Done";
     }
 
+
     const html = `
       <div class="ticket" id="${ticketId}">
         <div class="ticket-title">${ticket.name}</div>
         <div class="ticket-description">${ticket.description}</div>
         <div class="ticket-info">
-          <div class="date"><strong>Date:</strong> ${ticket.date_assigned}</div>
+          <div class="date"><strong>Date:</strong> ${ticket.dateAssigned}</div>
           <div class="priority"><strong>Priority:</strong> ${priority_value}</div>
         </div>
         <div class="ticket-info">
@@ -89,14 +68,41 @@ function clearTickets() {
   ticketsContainer.innerHTML = '';
 }
 
+function updateDynamicButtons() {
+  subscribe = document.getElementsByClassName("subscribe");
+  unsubscribe = document.getElementsByClassName("unsubscribe");
+  del = document.getElementsByClassName("delete deleteTicket");
+  claim = document.getElementsByClassName("claim");
+  edit = document.getElementsByClassName("edit");
+
+  console.log("Number of del buttons:");
+  console.log(del.length);
+
+  for (var i = 0; i < subscribe.length; i++) {
+    subscribe[i].addEventListener('click', subTicket);
+  }
+  // for (var i = 0; i < unsubscribe.length; i++) {
+  //   unsubscribe[i].addEventListener('click', unsubTicket);
+  // }
+  for (var i = 0; i < del.length; i++) {
+    del[i].addEventListener('click', deleteTicket);
+  }
+  for (var i = 0; i < claim.length; i++) {
+    claim[i].addEventListener('click', claimTicket);
+  }
+
+  for (var i = 0; i < edit.length; i++) {
+    edit[i].addEventListener('click', displayEdit);
+  }
+}
+
 
 
 // Get the HTML elements to show/hide
+const editTicketSection = document.getElementById("edit-ticket");
 const createTicketSection = document.getElementById("create-ticket");
 const viewTicketsSection = document.getElementById("view-tickets");
 const inboxSection = document.getElementById("inbox");
-
-
 
 // Get the menu items
 const createTicketLink = document.querySelector("a[href='#create-ticket']");
@@ -104,12 +110,15 @@ const viewTicketsLink = document.querySelector("a[href='#view-tickets']");
 const inboxLink = document.querySelector("a[href='#inbox']");
 
 // Hide all sections except for the Create a Ticket section initially
-viewTicketsSection.style.display = "none";
+createTicketSection.style.display = "none";
+editTicketSection.style.display = "none";
+viewTicketsSection.style.display = "block";
 inboxSection.style.display = "none";
 
 // Attach click event listeners to switch scenes
 createTicketLink.addEventListener("click", function(event) {
   event.preventDefault();
+  editTicketSection.style.display = "none";
   createTicketSection.style.display = "block";
   viewTicketsSection.style.display = "none";
   inboxSection.style.display = "none";
@@ -117,94 +126,89 @@ createTicketLink.addEventListener("click", function(event) {
 
 viewTicketsLink.addEventListener("click", function(event) {
   event.preventDefault();
+  editTicketSection.style.display = "none";
   createTicketSection.style.display = "none";
   viewTicketsSection.style.display = "block";
   inboxSection.style.display = "none";
-  console.log("Hello");
 });
 
 inboxLink.addEventListener("click", function(event) {
   event.preventDefault();
+  editTicketSection.style.display = "none";
   createTicketSection.style.display = "none";
   viewTicketsSection.style.display = "none";
   inboxSection.style.display = "block";
 });
 
+function displayEdit(event) {
+  event.preventDefault();
+  // Display the edit screen
+  editTicketSection.style.display = "block";
+  createTicketSection.style.display = "none";
+  viewTicketsSection.style.display = "none";
+  inboxSection.style.display = "none";
+  // Prepopulate the information from the ticket
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
   console.log("Page should have loaded");
-  const jsonData = '{"tickets": {"100": {"name": "Super-Ticket","assignee": 0,"status": 0,"subscribers": ["0", "10", "2", "3"],"description": "Hello World!","date_assigned": "2023-02-15","priority": 0},"618": {"name": "Super Lame Ticket","assignee": 10,"status": 2,"subscribers": [],"description": "This ticket sucks","date_assigned": "2023-02-04","priority": 2}},"inbox": {"0": ["Hello", "World!", "Boo"],"1": ["Leave me Here", "F-Society"]}}';
-  displayJson(jsonData);
+
+  // const jsonData = '{"tickets": {"100": {"name": "Super-Ticket","assignee": 0,"status": 0,"subscribers": ["0", "10", "2", "3"],"description": "Hello World!","date_assigned": "2023-02-15","priority": 0},"618": {"name": "Super Lame Ticket","assignee": 10,"status": 2,"subscribers": [],"description": "This ticket sucks","date_assigned": "2023-02-04","priority": 2}},"inbox": {"0": ["Hello", "World!", "Boo"],"1": ["Leave me Here", "F-Society"]}}';
+  // displayJson(jsonData);
+
 
   // Get the elements for REST API calls
   const myInbox = document.getElementById("my-inbox");
   const allTickets = document.getElementById("all-tickets");
   const createNewTicket = document.getElementById("submitTicket");
 
-  const subscribe = document.getElementsByClassName("subscribe");
-  const unsubscribe = document.getElementsByClassName("unsubscribe");
-  const del = document.getElementsByClassName("deleteTicket");
-  const claim = document.getElementsByClassName("claim");
+  updateDynamicButtons();
+
+
 
   // Add listeners
-  myInbox.addEventListener('click', getInbox);
+  // myInbox.addEventListener('click', getInbox);
   allTickets.addEventListener('click', getTickets);
   createNewTicket.addEventListener('click', postTicket);
 
-  for (var i = 0; i < subscribe.length; i++) {
-    subscribe[i].addEventListener('click', subTicket);
-  }
-  for (var i = 0; i < unsubscribe.length; i++) {
-    unsubscribe[i].addEventListener('click', unsubTicket);
-  }
-  for (var i = 0; i < del.length; i++) {
-    del[i].addEventListener('click', deleteTicket);
-  }
-  for (var i = 0; i < claim.length; i++) {
-    claim[i].addEventListener('click', deleteTicket);
-  }
 });
-
-
-
-
-
-// // Get the elements for REST API calls
-// const myInbox = document.getElementById("my-inbox");
-// const allTickets = document.getElementById("all-tickets");
-// const createNewTicket = document.getElementById("submitTicket");
-// const subscribe = document.getElementById("subscribe");
-// const unsubscribe = document.getElementById("unsubscribe");
-// const del = document.getElementById("deleteTicket");
-// const claim = document.getElementById("claim");
 
 
 // Functions
 
-function getInbox() {
-  const path = '/inbox/${userID}';
-  const url = baseURL + path;
+// function getInbox(event) {
+//   const path = '/inbox/${userID}';
+//   const url = baseURL + path;
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => console.log(data)) // DO stuff with Response
-    .catch(error => console.error(error));
-}
+//   fetch(url)
+//     .then(response => response.json())
+//     .then(data => console.log(data)) // DO stuff with Response
+//     .catch(error => console.error(error));
+// }
 
-function getTickets() {
+function getTickets(event) {
+  console.log("Get tickets is being called");
   const path = '/tasks';
   const url = baseURL + path;
 
 
   fetch(url)
     .then(response => response.json())
-    .then(data => console.log(data)) // Do stuff with response
+    .then(data => 
+      {
+        clearTickets();
+        displayJson(JSON.stringify(data));
+        updateDynamicButtons();
+      }) // Do stuff with response
     .catch(error => console.error(error));
 }
 
 function postTicket(event) {
+  console.log("Post ticket called");
   event.preventDefault();
-  const form = event.target;
+  const form = event.target.parentNode;
+  console.log(form)
   const formData = new FormData(form);
   const path = '/tasks';
   const url = baseURL + path;
@@ -213,36 +217,35 @@ function postTicket(event) {
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(Object.fromEntries(formData))
   };
+  console.log(options);
 
   fetch(url, options)
     .then(response => response.json())
-    .then(data => console.log(data)) // Do Stuff with response
+    .then(data => {
+      console.log(data);
+      form.reset();
+    }) 
     .catch(error => console.error(error));
 }
 
-function unsubTicket(event) {
-  event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
-  const path = '/tasks/${ticketID}';
-  const url = baseURL + path;
-  const options = {
-    method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(Object.fromEntries(formData))
-  };
+// function unsubTicket() {
+//   //  Need to get ticket ID from inbox for ticket
+//   const path = '/tasks/${ticketID}';
+//   const url = baseURL + path;
+//   const options = {
+//     method: 'PUT',
+//     headers: {'Content-Type': 'application/json'},
+//     body: JSON.stringify(Object.fromEntries(formData))
+//   };
 
-  fetch(url, options)
-    .then(response => response.json())
-    .then(data => console.log(data)) // Do Stuff with response
-    .catch(error => console.error(error));
-}
+//   fetch(url, options)
+//     .then(response => response.json())
+//     .then(data => console.log(data)) // Do Stuff with response
+//     .catch(error => console.error(error));
+// }
 
 function subTicket(event) {
   var ticketID = event.srcElement.parentNode.parentNode.id;
-  event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
   const path = '/tasks/${ticketID}';
   const url = baseURL + path;
   const options = {
@@ -258,7 +261,8 @@ function subTicket(event) {
 }
 
 // THis one may need to be changed, No form really for this one. Will just need user id and ticket id
-function claimTicket() {
+function claimTicket(event) {
+  var ticketID = event.srcElement.parentNode.parentNode.id;
   const claimData = {
     assignee: '${userID}'
   };
@@ -276,15 +280,27 @@ function claimTicket() {
     .catch(error => console.error(error));
 }
 
-function deleteTicket() {
-  const path = '/tasks/${ticketID}';
+function deleteTicket(event) {
+  var ticketID = event.srcElement.parentNode.parentNode.id;
+  console
+  console.log("Delete button pressed");
+  console.log(ticketID);
+
+
+  const path = '/tasks/' + ticketID;
   const url = baseURL + path;
   const options = {
-    method: 'DELETE',
+    method: 'DELETE'
   };
 
+  console.log(path);
+
   fetch(url, options)
-    .then(response => response.json())
-    .then(data => console.log(data)) // Do Stuff with response
+    .then(response => {
+      response.json();
+    })
+    .then(data => {
+      getTickets();
+    }) // Do Stuff with response
     .catch(error => console.error(error));
 }
