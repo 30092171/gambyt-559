@@ -162,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const myInbox = document.getElementById("my-inbox");
   const allTickets = document.getElementById("all-tickets");
   const createNewTicket = document.getElementById("submitTicket");
+  const updateTicket = document.getElementById("editTicket");
 
   updateDynamicButtons();
 
@@ -171,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // myInbox.addEventListener('click', getInbox);
   allTickets.addEventListener('click', getTickets);
   createNewTicket.addEventListener('click', postTicket);
+  updateTicket.addEventListener("click", putTicket);
 
 });
 
@@ -226,6 +228,22 @@ function postTicket(event) {
       form.reset();
     }) 
     .catch(error => console.error(error));
+}
+
+function putTicket(event) {
+  event.preventDefault();
+  // Need to get ticket ID
+  console.log("Put ticket called");
+  const form = event.target.parentNode;
+  const formData = new FormData(form);
+  const path = "/tasks/${ticketID}";
+  const url = baseURL + path;
+  const options = {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(Object.fromEntries(formData))
+  };
+  // Make API call
 }
 
 // function unsubTicket() {
