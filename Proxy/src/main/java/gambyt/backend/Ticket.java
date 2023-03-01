@@ -12,6 +12,7 @@ public class Ticket implements Serializable {
 
 	public String name = "";
 	public long assignee = -1; //id of user who has been assigned the ticket (-1 means unassigned)
+	String assigneeName = "Lord Voldemort";
 	public long status = -1; //0=to-do, 1=in-progress, 2=done
 	public ArrayList<String> subscribers = new ArrayList<String>();
 	public String description = "";
