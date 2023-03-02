@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import gambyt.backend.*;
+import gambyt.proxy.NameDatabase;
 
 import java.rmi.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @SuppressWarnings("unchecked")
@@ -18,8 +20,10 @@ import java.util.HashMap;
 public class TaskController {
 
 	private RemoteFrontend server;
+	private NameDatabase nameData;
 
 	public TaskController() {
+		nameData = new NameDatabase("src/Names.json");
 		server = RMIInstance.getInstance();
 	}
 
@@ -39,7 +43,9 @@ public class TaskController {
 //			array.add(ticpair);
 //		});
 		for(String tid : tickets.keySet()) {
-			wrapper.put(tid, tickets.get(tid));
+			Ticket t = tickets.get(tid);
+			t.assigneeName = this.nameData.getName(String.valueOf(t.assignee));
+			wrapper.put(tid, t);
 		}
 		return wrapper;
 	}
@@ -51,6 +57,12 @@ public class TaskController {
 		// Endpoint to add new task
 		nt.PrintTicketInfo();
 		String tID = server.newTicket(nt);
+		
+		//Checks to see whether the assignee exists
+		if(this.nameData.getName(String.valueOf(nt.assignee)) == null) {
+			return new ResponseEntity<>("BAD REQUEST", HttpStatus.BAD_REQUEST);
+		}
+		
 		server.getDatabase().addTicket(tID, nt);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
@@ -60,6 +72,12 @@ public class TaskController {
 	public ResponseEntity<String> updateTask(@PathVariable("id") String tID, @RequestBody Ticket ut) throws RemoteException {
 //    Endpoint to update a given ticket by its id
 		ut.PrintTicketInfo();
+		
+		//Checks to see whether the assignee exists
+		if(this.nameData.getName(String.valueOf(ut.assignee)) == null) {
+			return new ResponseEntity<>("BAD REQUEST", HttpStatus.BAD_REQUEST);
+		}
+		
 		server.updateTicket(tID, ut);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
@@ -77,6 +95,10 @@ public class TaskController {
 	public JSONObject getTask(@PathVariable("id") String tID) throws RemoteException {
 //        Endpoint to get a task by id
 		Ticket t = server.getTicket(tID);
+		if(t == null) {
+			throw new RemoteException("Invalid task");
+		}
+		t.assigneeName = this.nameData.getName(String.valueOf(t.assignee));
 		JSONObject wrapper = new JSONObject();
 		wrapper.put(tID, t);
 		return wrapper;
@@ -101,10 +123,13 @@ public class TaskController {
 //			array.add(ticpair);
 //		});
 		for(String tid : tickets.keySet()) {
-			wrapper.put(tid, tickets.get(tid));
+			Ticket t = tickets.get(tid);
+			t.assigneeName = this.nameData.getName(String.valueOf(t.assignee));
+			wrapper.put(tid, t);
 		}
 		return wrapper;
 	}
+	
 
 	@CrossOrigin(origins = "*")
 	@GetMapping("/unassigned")
@@ -121,7 +146,9 @@ public class TaskController {
 //			array.add(ticpair);
 //		});
 		for(String tid : tickets.keySet()) {
-			wrapper.put(tid, tickets.get(tid));
+			Ticket t = tickets.get(tid);
+			t.assigneeName = this.nameData.getName(String.valueOf(t.assignee));
+			wrapper.put(tid, t);
 		}
 		return wrapper;
 	}
