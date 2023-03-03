@@ -1,12 +1,13 @@
 const baseURL = 'http://127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
-const userID = 123;
+var userID = -1;
 
+// can't do this while on login page
 window.onload = function() {
   getTickets();
 }
 
-function displayJson(jsonData) {
-  // Get a reference to the element where you want to display the tickets
+function displayTickets(jsonData) {
+  // Get a reference to the element where we will display the tickets
   const ticketsContainer = document.getElementById('tickets-container');
 
   // Parse the JSON data and get the tickets object
@@ -63,12 +64,50 @@ function displayJson(jsonData) {
   }
 }
 
+function displayInbox(jsonData) {
+  // Get a reference to the element where we will display notifications 
+  const inboxContainer = document.getElementById('inbox-container');
+
+  const data = JSON.parse(jsonData);
+  console.log("Data at 0: " + data[0]);
+
+  console.log(data);
+
+  // Loop through the notificationsgenerate HTML code for each
+
+  for (var i = 0; i < data.length; i++) {
+    console.log(typeof data);
+    console.log("Notification: " + data[i]);
+    const ticketTitle = data[i].split(':')[0];
+    const ticketDesc = data[i].split(':')[1];
+
+    console.log("Ticket title:");
+    console.log(ticketTitle);
+    
+
+    const html = `
+    <div class="inbox-item">
+      <div class="ticket-title">${ticketTitle}</div>
+      <div class="ticket-description">${ticketDesc}</div>
+    </div>
+    `;
+    
+    // Append the generated HTML code to the inbox container
+    inboxContainer.innerHTML += html;
+  }
+}
+
 function clearTickets() {
   const ticketsContainer = document.getElementById('tickets-container');
   ticketsContainer.innerHTML = '';
 }
 
-function updateDynamicButtons() {
+function clearInbox() {
+  const inboxContainer = document.getElementById('inbox-container');
+  inboxContainer.innerHTML = '';
+}
+
+function updateDynamicTicketButtons() {
   subscribe = document.getElementsByClassName("subscribe");
   unsubscribe = document.getElementsByClassName("unsubscribe");
   del = document.getElementsByClassName("delete deleteTicket");
@@ -103,7 +142,7 @@ const createTicketSection = document.getElementById("create-ticket");
 const viewTicketsSection = document.getElementById("view-tickets");
 const inboxSection = document.getElementById("inbox");
 
-// Get the menu items
+// Get the menu items 
 const createTicketLink = document.querySelector("a[href='#create-ticket']");
 const viewTicketsLink = document.querySelector("a[href='#view-tickets']");
 const inboxLink = document.querySelector("a[href='#inbox']");
@@ -165,13 +204,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const updateTicket = document.getElementById("editTicket");
   const submitLogin = document.getElementById("submitLogin");
 
-  updateDynamicButtons();
+  updateDynamicTicketButtons();
 
 
 
   // Add listeners
   // myInbox.addEventListener('click', getInbox);
   allTickets.addEventListener('click', getTickets);
+  myInbox.addEventListener('click', getInbox)
   createNewTicket.addEventListener('click', postTicket);
   updateTicket.addEventListener("click", putTicket);
   submitLogin.addEventListener('click', attemptLogin);
@@ -191,6 +231,20 @@ document.addEventListener('DOMContentLoaded', function() {
 //     .catch(error => console.error(error));
 // }
 
+function loginSuccess() {
+  editTicketSection.style.display = "none";
+  createTicketSection.style.display = "none";
+  viewTicketsSection.style.display = "block";
+  inboxSection.style.display = "none";
+  loginSection.style.display = "none";
+  getTickets();
+  updateDynamicTicketButtons();
+}
+
+function loginFailure() {
+
+}
+
 function getTickets(event) {
   const path = '/tasks';
   const url = baseURL + path;
@@ -201,10 +255,36 @@ function getTickets(event) {
     .then(data => 
       {
         clearTickets();
-        displayJson(JSON.stringify(data));
-        updateDynamicButtons();
+        displayTickets(JSON.stringify(data));
+        updateDynamicTicketButtons();
       }) // Do stuff with response
     .catch(error => console.error(error));
+}
+
+
+function getInbox(event) {
+  event.preventDefault();
+
+  const path = '/inbox/' + userID;
+  const url = baseURL + path;
+  console.log(url);
+
+  const options = {
+    method: 'GET',
+    headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'},
+  };
+
+  fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      clearInbox();
+      displayInbox(JSON.stringify(data));
+    }) 
+    .catch(error => console.error(error));
+
+
+
 }
 
 
@@ -256,14 +336,29 @@ function attemptLogin(event) {
   const formData = new FormData(form);
   const id = formData.get("id");
 
-  const path = "/login/" + id;
+  const path = "/users/login/" + id;
   const url = baseURL + path;
+  console.log(url);
 
   const options = {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(Object.fromEntries(formData))
+    method: 'GET',
+    headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'},
   };
+
+  console.log(options);
+
+  fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      console.log("DATA:");
+      if (data['status']) {
+        userID = id;
+        loginSuccess();
+      } else {
+        loginFailure();
+      }
+    }) 
+    .catch(error => console.error(error));
 
   console.log(JSON.stringify(Object.fromEntries(formData)));
   // if valid response, set global variable userID to id entered 
