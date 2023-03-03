@@ -97,6 +97,7 @@ function updateDynamicButtons() {
 
 
 // Get the HTML elements to show/hide
+const loginSection = document.getElementById("login-section");
 const editTicketSection = document.getElementById("edit-ticket");
 const createTicketSection = document.getElementById("create-ticket");
 const viewTicketsSection = document.getElementById("view-tickets");
@@ -108,9 +109,10 @@ const viewTicketsLink = document.querySelector("a[href='#view-tickets']");
 const inboxLink = document.querySelector("a[href='#inbox']");
 
 // Hide all sections except for the Create a Ticket section initially
+loginSection.style.display = "block";
 createTicketSection.style.display = "none";
 editTicketSection.style.display = "none";
-viewTicketsSection.style.display = "block";
+viewTicketsSection.style.display = "none";
 inboxSection.style.display = "none";
 
 // Attach click event listeners to switch scenes
@@ -161,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const allTickets = document.getElementById("all-tickets");
   const createNewTicket = document.getElementById("submitTicket");
   const updateTicket = document.getElementById("editTicket");
+  const submitLogin = document.getElementById("submitLogin");
 
   updateDynamicButtons();
 
@@ -171,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
   allTickets.addEventListener('click', getTickets);
   createNewTicket.addEventListener('click', postTicket);
   updateTicket.addEventListener("click", putTicket);
+  submitLogin.addEventListener('click', attemptLogin);
 
 });
 
@@ -203,6 +207,24 @@ function getTickets(event) {
     .catch(error => console.error(error));
 }
 
+
+
+function putTicket(event) {
+  event.preventDefault();
+  // Need to get ticket ID
+  console.log("Put ticket called");
+  const form = event.target.parentNode;
+  const formData = new FormData(form);
+  const path = "/tasks/${ticketID}";
+  const url = baseURL + path;
+  const options = {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(Object.fromEntries(formData))
+  };
+  // Make API call
+}
+
 function postTicket(event) {
   event.preventDefault();
   console.log("Post ticket called");
@@ -227,20 +249,24 @@ function postTicket(event) {
     .catch(error => console.error(error));
 }
 
-function putTicket(event) {
+function attemptLogin(event) {
+  console.log("Attempt login called")
   event.preventDefault();
-  // Need to get ticket ID
-  console.log("Put ticket called");
   const form = event.target.parentNode;
   const formData = new FormData(form);
-  const path = "/tasks/${ticketID}";
+  const id = formData.get("id");
+
+  const path = "/login/" + id;
   const url = baseURL + path;
+
   const options = {
-    method: 'PUT',
+    method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(Object.fromEntries(formData))
   };
-  // Make API call
+
+  console.log(JSON.stringify(Object.fromEntries(formData)));
+  // if valid response, set global variable userID to id entered 
 }
 
 // function unsubTicket() {
