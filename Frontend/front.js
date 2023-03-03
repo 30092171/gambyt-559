@@ -44,7 +44,7 @@ function displayJson(jsonData) {
           <div class="priority"><strong>Priority:</strong> ${priority_value}</div>
         </div>
         <div class="ticket-info">
-          <div class="assignee"><strong>Assignee:</strong> ${ticket.assignee}</div>
+          <div class="assignee"><strong>Assignee:</strong> ${ticket.assigneeName}</div>
           <div class="status"><strong>Status:</strong> ${status_value}</div>
         </div>
         <div class="ticket-buttons">
@@ -188,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // }
 
 function getTickets(event) {
-  event.preventDefault();
   const path = '/tasks';
   const url = baseURL + path;
 
