@@ -17,6 +17,7 @@ public class Server {
             // Create registry local to server on port 1099 (default port)
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.bind("FrontendImpl", front);
+            System.err.println("Server Running Succesfully Bois");
 
         }
         catch (Exception e) {
