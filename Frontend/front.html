@@ -110,19 +110,20 @@
         <div id="edit-ticket-form">
           <h2>Edit Ticket</h2>
           <form autocomplete="off">
+            <input type="hidden" id="hidden-ticket-id" name="ticketId" value="${ticketId}">
             <label for="name">Job Title:</label>
-            <input type="text" id="job-title" name="name" required>
+            <input type="text" id="edit-job-title" name="name" required>
 
             <label for="description">Description:</label>
-            <textarea id="description" name="description" required></textarea>
+            <textarea id="edit-description" name="description" required></textarea>
             <div id="date-and-priority">
               <div>
                 <label for="dateAssigned">Due Date:</label>
-                <input type="date" id="due-date" name="dateAssigned" required>
+                <input type="date" id="edit-due-date" name="dateAssigned" required>
               </div>
               <div>
                 <label for="priority">Priority:</label>
-                <select id="priority" name="priority" required>
+                <select id="edit-priority" name="priority" required>
                   <option value="2">High</option>
                   <option value="1">Medium</option>
                   <option value="0">Low</option>
@@ -130,7 +131,7 @@
               </div>
               <div>
                 <label for="status">Status:</label>
-                <select id="status" name="status" required>
+                <select id="edit-status" name="status" required>
                   <option value="0">To-Do</option>
                   <option value="1">In Progress</option>
                   <option value="2">Complete</option>
@@ -139,7 +140,7 @@
             </div>
 
             <label for="assignee">Assignee:</label>
-            <input type="text" id="assignee" name="assignee" required>
+            <input type="text" id="edit-assignee" name="assignee" required>
 
             <button type="submit" id="editTicket">Update</button>
           </form>

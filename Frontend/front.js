@@ -37,7 +37,7 @@ function displayTickets(jsonData) {
 
 
     const html = `
-      <div class="ticket" id="${ticketId}">
+      <div class="ticket" id="${ticketId}" data-ticket-id="${ticketId}">
         <div class="ticket-title">${ticket.name}</div>
         <div class="ticket-description">${ticket.description}</div>
         <div class="ticket-info">
@@ -49,7 +49,7 @@ function displayTickets(jsonData) {
           <div class="status"><strong>Status:</strong> ${status_value}</div>
         </div>
         <div class="ticket-buttons">
-          <button class="edit" id="edit">Edit</button>
+          <button class="edit" id="edit" data-ticket='${JSON.stringify(ticket)}'>Edit</button>
           <button class="delete deleteTicket" type="button" id="deleteTicket">Delete</button>
         </div>
         <div class="ticket-buttons">
@@ -180,12 +180,33 @@ inboxLink.addEventListener("click", function(event) {
 
 function displayEdit(event) {
   event.preventDefault();
+  var ticketData = JSON.parse(event.target.dataset.ticket);
+
   // Display the edit screen
   editTicketSection.style.display = "block";
   createTicketSection.style.display = "none";
   viewTicketsSection.style.display = "none";
   inboxSection.style.display = "none";
+  
+  console.log(ticketData);
+
+  var ticketId = event.target.closest('.ticket').dataset.ticketId;
+  console.log("Ticket id: " + ticketId);
+
   // Prepopulate the information from the ticket
+  document.querySelector('#hidden-ticket-id').value = ticketId;
+  document.querySelector('#edit-job-title').value = ticketData.name;
+  document.querySelector('#edit-description').value = ticketData.description;
+  document.querySelector('#edit-due-date').value = ticketData.dateAssigned;
+  document.querySelector('#edit-priority').value = ticketData.priority;
+  document.querySelector('#edit-status').value = ticketData.status;
+  document.querySelector('#edit-assignee').value = ticketData.assigneeName;
+
+  // form.id = ticketData.id;
+  // console.log("Ticket id: " + ticketData.id);
+
+
+  
 }
 
 
@@ -321,16 +342,30 @@ function putTicket(event) {
   event.preventDefault();
   // Need to get ticket ID
   console.log("Put ticket called");
+
   const form = event.target.parentNode;
+  console.log(form);
   const formData = new FormData(form);
-  const path = "/tasks/${ticketID}";
+
+  const id = document.querySelector('#hidden-ticket-id').value;
+  console.log("id: " + id);
+
+  const path = "/tasks/" + id;
   const url = baseURL + path;
+
   const options = {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(Object.fromEntries(formData))
   };
-  // Make API call
+  console.log(options);
+  fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      form.reset();
+    }) 
+    .catch(error => console.error(error));
 }
 
 function postTicket(event) {
@@ -418,10 +453,10 @@ function subTicket(event) {
     body: JSON.stringify(Object.fromEntries(formData))
   };
 
-  fetch(url, options)
-    .then(response => response.json())
-    .then(data => console.log(data)) // Do Stuff with response
-    .catch(error => console.error(error));
+  // fetch(url, options)
+  //   .then(response => response.json())
+  //   .then(data => console.log(data)) // Do Stuff with response
+  //   .catch(error => console.error(error));
 }
 
 // THis one may need to be changed, No form really for this one. Will just need user id and ticket id
