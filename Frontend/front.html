@@ -12,7 +12,7 @@
 	<header>
 		<h1>Gambyt Solutions</h1>
     <td><img style="width: 100px;" src="./assets/Gambit.png" alt="GambytLogo" /></td>
-		<nav>
+		<nav id="navbar">
 			<ul>
 				<li><a href="#create-ticket">Create a Ticket</a></li>
 				<li><a href="#view-tickets" id="all-tickets">View Tickets</a></li>
@@ -100,13 +100,9 @@
 		<section id="inbox">
 			<h2>Inbox</h2>
       <div class="ticket-buttons">
-        <button class="clear-inbox ticket-info">Clear Inbox</button>
+        <button class="clear-inbox ticket-info" id="clear-inbox">Clear Inbox</button>
       </div>
       <div id="inbox-container"></div>
-			<div class="inbox-item">
-        <div class="ticket-title">Ticket Title</div>
-        <div class="ticket-description">The status of this ticket has been changed to complete.</div>
-      </div>
 		</section>
 
     <section id="edit-ticket">

@@ -69,7 +69,6 @@ function displayInbox(jsonData) {
   const inboxContainer = document.getElementById('inbox-container');
 
   const data = JSON.parse(jsonData);
-  console.log("Data at 0: " + data[0]);
 
   console.log(data);
 
@@ -77,11 +76,9 @@ function displayInbox(jsonData) {
 
   for (var i = 0; i < data.length; i++) {
     console.log(typeof data);
-    console.log("Notification: " + data[i]);
     const ticketTitle = data[i].split(':')[0];
     const ticketDesc = data[i].split(':')[1];
 
-    console.log("Ticket title:");
     console.log(ticketTitle);
     
 
@@ -141,6 +138,7 @@ const editTicketSection = document.getElementById("edit-ticket");
 const createTicketSection = document.getElementById("create-ticket");
 const viewTicketsSection = document.getElementById("view-tickets");
 const inboxSection = document.getElementById("inbox");
+const navbar = document.getElementById("navbar");
 
 // Get the menu items 
 const createTicketLink = document.querySelector("a[href='#create-ticket']");
@@ -153,6 +151,7 @@ createTicketSection.style.display = "none";
 editTicketSection.style.display = "none";
 viewTicketsSection.style.display = "none";
 inboxSection.style.display = "none";
+navbar.style.display = "none";
 
 // Attach click event listeners to switch scenes
 createTicketLink.addEventListener("click", function(event) {
@@ -203,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const createNewTicket = document.getElementById("submitTicket");
   const updateTicket = document.getElementById("editTicket");
   const submitLogin = document.getElementById("submitLogin");
+  const clearInboxButton = document.getElementById("clear-inbox");
 
   updateDynamicTicketButtons();
 
@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
   createNewTicket.addEventListener('click', postTicket);
   updateTicket.addEventListener("click", putTicket);
   submitLogin.addEventListener('click', attemptLogin);
+  clearInboxButton.addEventListener('click', clearUserInbox);
 
 });
 
@@ -237,6 +238,7 @@ function loginSuccess() {
   viewTicketsSection.style.display = "block";
   inboxSection.style.display = "none";
   loginSection.style.display = "none";
+  navbar.style.display = "block";
   getTickets();
   updateDynamicTicketButtons();
 }
@@ -262,9 +264,29 @@ function getTickets(event) {
 }
 
 
-function getInbox(event) {
+function clearUserInbox(event) {
   event.preventDefault();
+  const path = '/inbox/' + userID;
+  const url = baseURL + path;
+  console.log(url);
 
+  const options = {
+    method: 'DELETE',
+    headers: {'Content-Type': 'application/json'},
+  };
+
+  console.log(options);
+
+  fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      clearInbox();
+      getInbox(event);
+    }) 
+}
+
+function getInbox(event) {
   const path = '/inbox/' + userID;
   const url = baseURL + path;
   console.log(url);
@@ -275,11 +297,11 @@ function getInbox(event) {
   };
 
   fetch(url, options)
-    .then(response => response.json())
+    .then(response => console.log(response))
     .then(data => {
       console.log(data);
       clearInbox();
-      displayInbox(JSON.stringify(data));
+      if (data != undefined) {displayInbox(JSON.stringify(data));}
     }) 
     .catch(error => console.error(error));
 
@@ -350,7 +372,6 @@ function attemptLogin(event) {
   fetch(url, options)
     .then(response => response.json())
     .then(data => {
-      console.log("DATA:");
       if (data['status']) {
         userID = id;
         loginSuccess();
