@@ -284,6 +284,8 @@ function clearUserInbox(event) {
       clearInbox();
       getInbox(event);
     }) 
+    .catch(error => console.error(error));
+
 }
 
 function getInbox(event) {
