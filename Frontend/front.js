@@ -299,8 +299,12 @@ function getInbox(event) {
   };
 
   fetch(url, options)
-    .then(response => console.log(response))
+    .then(response => {
+      
+      response.json();
+    })
     .then(data => {
+      console.log("Data response");
       console.log(data);
       clearInbox();
       if (data != undefined) {displayInbox(JSON.stringify(data));}
