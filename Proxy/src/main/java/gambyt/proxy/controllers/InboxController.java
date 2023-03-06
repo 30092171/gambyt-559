@@ -12,23 +12,21 @@ import gambyt.backend.RemoteFrontend;
 @RestController
 @RequestMapping("/api/v1/inbox")
 public class InboxController {
-	private RemoteFrontend server;
 
 	public InboxController() {
-		server = RMIInstance.getInstance();
 	}
 
 	@CrossOrigin(origins = "*")
 	@GetMapping("/{id}")
 	public ArrayList<String> getUserInbox(@PathVariable("id") String uID) throws RemoteException {
-		ArrayList<String> inbox = server.getUserInbox(uID);
+		ArrayList<String> inbox = RMIInstance.getInstance().getUserInbox(uID);
 		return inbox;
 	}
 
 	@CrossOrigin(origins = "*")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> clearUserInbox(@PathVariable("id") String uID) throws RemoteException {
-		server.clearUserInbox(uID);
+		RMIInstance.getInstance().clearUserInbox(uID);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
