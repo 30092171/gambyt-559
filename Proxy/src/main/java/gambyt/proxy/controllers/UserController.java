@@ -46,13 +46,14 @@ public class UserController {
 	@CrossOrigin(origins = "*")
     @GetMapping("/login/{id}")
 	public JSONObject checkLogin(@PathVariable("id") String uID) throws RemoteException {
-//        Endpoint to login a user Returns JSON Object {"status": 0} 
+		//Endpoint to login a user Returns JSON Object {"status": 0} 
     	//0 - login failed
     	//1 - login successful (user is in name database)
     
     	JSONObject wrapper = new JSONObject();
     	long status = 0;
     	
+		
     	if(nameData.getName(uID) != null) {
     		status = 1; //Login was successful
     	}
