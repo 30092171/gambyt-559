@@ -320,10 +320,7 @@ function getInbox(event) {
   };
 
   fetch(url, options)
-    .then(response => {
-      
-      response.json();
-    })
+    .then(response => response.json())
     .then(data => {
       console.log("Data response");
       console.log(data);
