@@ -53,7 +53,7 @@ function displayTickets(jsonData) {
           <button class="delete deleteTicket" type="button" id="deleteTicket">Delete</button>
         </div>
         <div class="ticket-buttons">
-          <button class="subscribe" id="subscribe">Subscribe</button>
+          <button class="subscribe" id="subscribe" data-ticket='${JSON.stringify(ticket)}'>Subscribe</button>
           <button class="claim" id="claim">Claim</button>
         </div>
       </div>
@@ -106,7 +106,7 @@ function clearInbox() {
 
 function updateDynamicTicketButtons() {
   subscribe = document.getElementsByClassName("subscribe");
-  unsubscribe = document.getElementsByClassName("unsubscribe");
+  // unsubscribe = document.getElementsByClassName("unsubscribe");
   del = document.getElementsByClassName("delete deleteTicket");
   claim = document.getElementsByClassName("claim");
   edit = document.getElementsByClassName("edit");
@@ -445,18 +445,29 @@ function attemptLogin(event) {
 function subTicket(event) {
   event.preventDefault();
   var ticketID = event.srcElement.parentNode.parentNode.id;
-  const path = '/tasks/${ticketID}';
+  var ticketData = JSON.parse(event.target.dataset.ticket);
+  var subsList = ticketData.subscribers;
+  console.log(ticketData)
+  if (subsList.includes(userID)) {
+    console.log("User is already subscribed to this");
+    return
+  }
+  else {
+    subsList.push(userID)
+  }
+  // console.log(subsList);
+  const path = '/tasks/' + ticketID;
   const url = baseURL + path;
   const options = {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(Object.fromEntries(formData))
+    body: JSON.stringify(ticketData)
   };
 
-  // fetch(url, options)
-  //   .then(response => response.json())
-  //   .then(data => console.log(data)) // Do Stuff with response
-  //   .catch(error => console.error(error));
+  fetch(url, options)
+    .then(response => response.json())
+    .then(data => console.log(data)) // Do Stuff with response
+    .catch(error => console.error(error));
 }
 
 // THis one may need to be changed, No form really for this one. Will just need user id and ticket id
