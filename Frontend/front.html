@@ -63,8 +63,8 @@
               </div>
             </div>
 
-            <label for="assignee">Assignee:</label>
-            <input type="text" id="assignee" name="assignee" required>
+            <label class="assigneeInp" for="assignee">Assignee:</label>
+            <input class="assigneeInp" type="text" id="assignee" name="assignee" value="-1" required>
 
             <button type="submit" id="submitTicket">Create Ticket</button>
           </form>
@@ -73,7 +73,7 @@
 		</section>
 		<section id="view-tickets">
       <h2>View Tickets</h2>
-      <form id="ticket-filter">
+      <!-- <form id="ticket-filter">
         <div id="ticket-filter-inputs">
           <div>
             <label for="filter-by">Filter By:</label>
@@ -91,7 +91,12 @@
           </div>
         </div>
       <button type="submit">Apply Filter</button>
-      </form>
+      </form> -->
+      <div class="switch-view">
+        <button type="button" id="all">All Tickets</button>
+        <button type="button" id="mine">My Tickets</button>
+        <button type="button" id="unclaimed">Unclaimed</button>
+      </div>
 
       <div id="tickets-container">
       </div>

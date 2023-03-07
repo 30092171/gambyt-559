@@ -54,7 +54,7 @@ function displayTickets(jsonData) {
         </div>
         <div class="ticket-buttons">
           <button class="subscribe" id="subscribe" data-ticket='${JSON.stringify(ticket)}'>Subscribe</button>
-          <button class="claim" id="claim">Claim</button>
+          <button class="claim" id="claim" data-ticket='${JSON.stringify(ticket)}'>Claim</button>
         </div>
       </div>
     `;
@@ -224,6 +224,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const updateTicket = document.getElementById("editTicket");
   const submitLogin = document.getElementById("submitLogin");
   const clearInboxButton = document.getElementById("clear-inbox");
+  const allTicketstwo = document.getElementById("all");
+  const myTickets = document.getElementById("mine");
+  const unclaimed = document.getElementById("unclaimed");
 
   updateDynamicTicketButtons();
 
@@ -237,6 +240,9 @@ document.addEventListener('DOMContentLoaded', function() {
   updateTicket.addEventListener("click", putTicket);
   submitLogin.addEventListener('click', attemptLogin);
   clearInboxButton.addEventListener('click', clearUserInbox);
+  allTicketstwo.addEventListener('click', getTickets);
+  myTickets.addEventListener('click', getMyTickets);
+  unclaimed.addEventListener('click', getUnclaimed);
 
 });
 
@@ -284,6 +290,46 @@ function getTickets(event) {
     .catch(error => console.error(error));
 }
 
+function getMyTickets(event) {
+  // event.preventDefault();
+  const path = '/tasks/user/' + userID
+  const url  = baseURL + path
+
+  const options = {
+    method: 'GET', 
+    headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'},
+  }
+
+  fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      clearTickets();
+      displayTickets(JSON.stringify(data));
+      updateDynamicTicketButtons();
+    })
+    .catch(error => console.error(error));
+}
+
+function getUnclaimed(event) {
+  // event.preventDefault();
+  const path = 'tasks/unclaimed'
+  const url  = baseURL + path
+
+  const options = {
+    method: 'GET', 
+    headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'},
+  }
+
+  fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+      clearTickets();
+      displayTickets(JSON.stringify(data));
+      updateDynamicTicketButtons();
+    })
+    .catch(error => console.error(error));
+}
+
 
 function clearUserInbox(event) {
   event.preventDefault();
@@ -320,10 +366,7 @@ function getInbox(event) {
   };
 
   fetch(url, options)
-    .then(response => {
-      
-      response.json();
-    })
+    .then(response => response.json())
     .then(data => {
       console.log("Data response");
       console.log(data);
@@ -474,15 +517,17 @@ function subTicket(event) {
 function claimTicket(event) {
   event.preventDefault();
   var ticketID = event.srcElement.parentNode.parentNode.id;
-  const claimData = {
-    assignee: '${userID}'
-  };
-  const path = '/tasks/${ticketID}';
+  var ticketData = JSON.parse(event.target.dataset.ticket);
+  ticketData.assignee = Number(userID);
+  ticketData.assigneeName = "";
+  console.log(ticketData);
+  const path = '/tasks/' + ticketID;
   const url = baseURL + path;
+  console.log(url);
   const options = {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(claimData)
+    body: JSON.stringify(ticketData)
   };
 
   fetch(url, options)
