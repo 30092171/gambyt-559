@@ -312,7 +312,7 @@ function getMyTickets(event) {
 
 function getUnclaimed(event) {
   // event.preventDefault();
-  const path = 'tasks/unclaimed'
+  const path = '/tasks/unassigned'
   const url  = baseURL + path
 
   const options = {
