@@ -113,7 +113,10 @@ form input, form select, form textarea {
 #ticket-filter-inputs {
   display:flex;
   gap: 1rem;
-  
+}
+
+.assigneeInp {
+  display: none;
 }
 
 
@@ -251,7 +254,7 @@ footer {
 }
 
 /* Style the filter button */
-#view-tickets button[type="submit"] {
+.switch-view button[type="button"] {
   background-color: green;
   color: white;
   padding: 8px 16px;
