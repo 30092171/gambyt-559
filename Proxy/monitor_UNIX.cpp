@@ -15,13 +15,13 @@ using namespace std;
 
 
 //functions
-void signal_callback_handler(int);
+void signal_callback_handler(int); //Function to intercept ctrl+c
 
 //Global Vars
 //STARTUPINFO si;
 //PROCESS_INFORMATION pi;
 
-int pid;
+int pid; //Global var used so that child can be killed
 
 //https://learn.microsoft.com/en-us/windows/win32/procthread/creating-processes
 //int main(){
@@ -71,30 +71,37 @@ int pid;
 //    return 0;
 //}
 
-
+/*
+UNIX
+This function creates a new process which launches the proxy.
+Should the process crash it will relaunch it.
+The program will run forever until an interrupt is detected.
+*/
 int main (){
 
     // Register signal and signal handler
     signal(SIGINT, signal_callback_handler);
 
+    //This currently throws warnings but I can't use const char*[], so oh well.
     char *arr[] = {"-jar", "target/Proxy-0.0.1-SNAPSHOT.jar", NULL};
+
 
    while(true){
         cout << "Starting Proxy" << endl;
         sleep(3); //Helps prevent fork-bombing
 
-        int p = fork();
+        int p = fork(); //Creates new process
 
         //Child
         if(p == 0){
-            execv("/bin/java", arr);
+            execv("/bin/java", arr); //Launches proxy
             return 0;
         }
 
         //Parent
         else{
             pid = p; //For killing later
-            wait(NULL);
+            wait(NULL); //Waits for it to crash
        }
     }
 
@@ -123,6 +130,11 @@ int main (){
 //}
 
 
+/*
+Function to catch interrupt for UNIX Machines.
+Kills the child process gracefully so that no orphans are created.
+Then Exits
+*/
 void signal_callback_handler(int signum) {
    cout << "Interrupt Detected..." << endl;
    cout << "Caught signal " << signum << endl;

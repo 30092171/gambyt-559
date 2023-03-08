@@ -15,7 +15,7 @@ using namespace std;
 
 
 //functions
-void signal_callback_handler(int);
+void signal_callback_handler(int); //Function to intercept ctrl+c
 
 //Global Vars
 STARTUPINFO si;
@@ -24,6 +24,12 @@ PROCESS_INFORMATION pi;
 //int pid;
 
 //https://learn.microsoft.com/en-us/windows/win32/procthread/creating-processes
+/*
+WINDOWS
+This function creates a new process which launches the proxy.
+Should the process crash it will relaunch it.
+The program will run forever until an interrupt is detected.
+*/
 int main(){
 
     // Register signal and signal handler
@@ -32,10 +38,13 @@ int main(){
     //Loop forever to ensure child is always active
     while(true){
         cout << "Starting Proxy" << endl;
+
+        //Clears memeory
         ZeroMemory( &si, sizeof(si) );
         si.cb = sizeof(si);
         ZeroMemory( &pi, sizeof(pi) );
 
+        //Creates cmd
         string s = "java -jar target\\Proxy-0.0.1-SNAPSHOT.jar";
         TCHAR cmd[100] = {0};
         strncpy(cmd,s.c_str(),s.length());
@@ -102,6 +111,11 @@ int main(){
 //}
 
 
+/*
+Function to catch interrupt for Windows Machines.
+Kills the child process gracefully so that no orphans are created.
+Then Exits
+*/
 void signal_callback_handler(int signum) {
    cout << "Interrupt Detected..." << endl;
    cout << "Caught signal " << signum << endl;
