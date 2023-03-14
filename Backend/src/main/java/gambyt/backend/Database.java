@@ -30,6 +30,15 @@ public class Database implements Serializable {
 		this.Tickets = new HashMap<String,Ticket>();
 		this.Inbox = new HashMap<String, ArrayList<String>>();
 	}
+
+	/**
+	 * Copy Constructor
+	 * @param newDB
+	 */
+	public Database(Database newDB) {
+		Tickets = newDB.getTickets();
+		Inbox = newDB.getInboxes();
+	}
 	
 	/**
 	 * Constructor which populates off of a JSON file.
