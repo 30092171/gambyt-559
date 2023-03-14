@@ -2,6 +2,7 @@ package gambyt.proxy.controllers;
 
 import gambyt.backend.Database;
 import gambyt.backend.RemoteFrontend;
+import gambyt.proxy.ServerNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,10 +32,15 @@ public class DatabaseController {
         }
         // register backend and send the db copy to new backend
         else {
-            Database db = RMIInstance.getInstance().getDatabase();
-            RemoteFrontend newServer = RMIInstance.registerNewInstance(ip);
-            newServer.setDatabase(db);
-            RMIInstance.addInstanceToRotation(newServer, ip);
+            try {
+                Database db = RMIInstance.getInstance().getDatabase();
+                RemoteFrontend newServer = RMIInstance.registerNewInstance(ip);
+                newServer.setDatabase(db);
+                RMIInstance.addInstanceToRotation(newServer, ip);
+            }
+            catch (ServerNotFoundException e) {
+                return new ResponseEntity<>("Servers Offline", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }

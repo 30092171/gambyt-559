@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.lang.*;
 
 import gambyt.backend.RemoteFrontend;
+import gambyt.backend.Server;
+import gambyt.proxy.ServerNotFoundException;
 
 public class RMIInstance {
 	private static ArrayList<RemoteFrontend> INSTANCES = new ArrayList<RemoteFrontend>();
@@ -63,7 +65,7 @@ public class RMIInstance {
 		System.out.println('\t' + ip + " (success): " + inst.getPathToData());
 	}
 
-	public static RemoteFrontend getInstance() throws RemoteException{
+	public static RemoteFrontend getInstance() throws ServerNotFoundException {
 		while (instanceExists()) {
 			INDEX = INDEX % INSTANCES.size();
 //			if (INDEX >= INSTANCES.size())
@@ -78,7 +80,7 @@ public class RMIInstance {
 				IPS.remove(INDEX);
 			}
 		}
-		throw new RemoteException("No more servers, please wait for another server to connect");
+		throw new ServerNotFoundException("No more servers, please wait for another server to connect");
 	}
 
 	public static Boolean instanceExists() {
