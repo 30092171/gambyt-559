@@ -46,6 +46,9 @@ public class Server {
             if (resp.statusCode() != 200) {
                 System.out.println(resp.toString());
             }
+            else {
+                System.out.println("Server connected to " + proxyIp);
+            }
 
         }
         catch (Exception e) {
