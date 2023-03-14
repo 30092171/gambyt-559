@@ -32,4 +32,6 @@ public interface RemoteFrontend extends Remote {
 
     public Database getDatabase() throws RemoteException;
 
+    public void setDatabase(Database db) throws RemoteException;
+
 }
