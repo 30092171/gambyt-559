@@ -1,5 +1,6 @@
 package gambyt.proxy.controllers;
 
+import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -30,11 +31,12 @@ public class RMIInstance {
 //		}
 	}
 
-	public static void registerInstance(String ip) {
+	public static void registerFirstInstance(String ip) {
 		String url = "rmi://" + ip + '/';
 		try {
 			RemoteFrontend newInstance = (RemoteFrontend) Naming.lookup(url + "FrontendImpl");
 			INSTANCES.add(newInstance);
+			IPS.add(ip);
 			System.out.println('\t' + ip + " (success): " + newInstance.getPathToData());
 		} catch (Exception e) {
 			System.out.println("IP: " + ip);
@@ -43,7 +45,7 @@ public class RMIInstance {
 		}
 	}
 
-	public static RemoteFrontend registerRequestedInstance(String ip) throws RemoteException {
+	public static RemoteFrontend registerNewInstance(String ip) throws RemoteException {
 		String url = "rmi://" + ip + '/';
 		try {
 			RemoteFrontend newInstance = (RemoteFrontend) Naming.lookup(url + "FrontendImpl");
@@ -61,14 +63,35 @@ public class RMIInstance {
 		System.out.println('\t' + ip + " (success): " + inst.getPathToData());
 	}
 
-	public static RemoteFrontend getInstance() {
-		if (INDEX >= INSTANCES.size())
-			INDEX = 0;
-		System.out.println(INDEX + ": " + IPS.get(INDEX));
-		return INSTANCES.get(INDEX++);
+	public static RemoteFrontend getInstance() throws RemoteException{
+		while (instanceExists()) {
+			INDEX = INDEX % INSTANCES.size();
+//			if (INDEX >= INSTANCES.size())
+//				INDEX = 0;
+			System.out.println(INDEX + ": " + IPS.get(INDEX));
+			try {
+				INSTANCES.get(INDEX).checkStatus();
+				return INSTANCES.get(INDEX++);
+			} catch (RemoteException e) {
+				System.out.println("Remote Server " + IPS.get(INDEX) + " is not responding. Dropping it from list...");
+				INSTANCES.remove(INDEX);
+				IPS.remove(INDEX);
+			}
+		}
+		throw new RemoteException("No more servers, please wait for another server to connect");
 	}
 
 	public static Boolean instanceExists() {
 		return INSTANCES.size() > 0;
+	}
+
+	public static Boolean ipInRotation(String ip) {
+		return IPS.contains(ip);
+	}
+
+	public static void removeServer(String ip) {
+		int i = IPS.indexOf(ip);
+		IPS.remove(i);
+		INSTANCES.remove(i);
 	}
 }

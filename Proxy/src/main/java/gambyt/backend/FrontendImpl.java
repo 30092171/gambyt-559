@@ -128,5 +128,12 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 			System.out.println("Failed to set database due to the following exception: " + e.getMessage());
 		}
 	}
+
+	/*
+		Empty function to check status of the server.
+	 */
+	public int checkStatus() {
+		return 1;
+	}
 	
 }

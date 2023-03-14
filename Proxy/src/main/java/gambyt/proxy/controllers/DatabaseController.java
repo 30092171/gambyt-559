@@ -17,16 +17,22 @@ import java.rmi.RemoteException;
 public class DatabaseController {
     @PostMapping("/register")
     public ResponseEntity<String> registerBackend(HttpServletRequest req) throws RemoteException {
-        // If first instance, just add it to the rotation.
         String ip = req.getRemoteAddr();
+
+        // If the IP connecting is already registered, remove it from the rotation before re-registering
+        if (RMIInstance.ipInRotation(ip)) {
+            RMIInstance.removeServer(ip);
+        }
+
+        // If first instance, just add it to the rotation.
         if (!RMIInstance.instanceExists()) {
             System.out.println("No instances currently connected. New server being added...");
-            RMIInstance.registerInstance(ip);
+            RMIInstance.registerFirstInstance(ip);
         }
         // register backend and send the db copy to new backend
         else {
             Database db = RMIInstance.getInstance().getDatabase();
-            RemoteFrontend newServer = RMIInstance.registerRequestedInstance(ip);
+            RemoteFrontend newServer = RMIInstance.registerNewInstance(ip);
             newServer.setDatabase(db);
             RMIInstance.addInstanceToRotation(newServer, ip);
         }
