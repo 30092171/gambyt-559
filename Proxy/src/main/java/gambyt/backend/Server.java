@@ -34,7 +34,7 @@ public class Server {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI("http://" + proxyIp + "/api/v1/database/register"))
                     .headers("Content-Type", "text/plain;charset=UTF-8")
-                    .POST(HttpRequest.BodyPublishers.ofString("testing testing"))
+                    .POST(HttpRequest.BodyPublishers.ofString("Initiate Connection"))
                     .build();
 
             HttpResponse resp = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -42,7 +42,9 @@ public class Server {
             if (resp.statusCode() != 200) {
                 System.out.println(resp.toString());
             }
-
+            else {
+                System.out.println("Server connected to " + proxyIp);
+            }
         }
         catch (Exception e) {
             System.out.println("Exception occurred while running server: " + e.toString());
