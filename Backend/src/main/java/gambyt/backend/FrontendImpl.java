@@ -118,5 +118,22 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 	public Database getDatabase() {
 		return database;
 	}
+
+	public void setDatabase(Database db) {
+		this.database = new Database(db);
+		try {
+			database.saveJSON(pathToData);
+		}
+		catch (IOException e) {
+			System.out.println("Failed to set database due to the following exception: " + e.getMessage());
+		}
+	}
+
+	/*
+		Empty function to check status of the server.
+	 */
+	public int checkStatus() {
+		return 1;
+	}
 	
 }

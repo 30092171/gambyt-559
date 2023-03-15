@@ -1,5 +1,6 @@
 package gambyt.proxy.controllers;
 
+import gambyt.proxy.ServerNotFoundException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class TaskController {
 
 	@CrossOrigin(origins = "*")
 	@GetMapping("")
-	public JSONObject getAllTasks() throws RemoteException {
+	public JSONObject getAllTasks() throws RemoteException, ServerNotFoundException {
 //        Endpoint to return all tickets
 		HashMap<String, Ticket> tickets = RMIInstance.getInstance().getAllTickets();
 		JSONObject wrapper = new JSONObject();
@@ -51,8 +52,12 @@ public class TaskController {
 		if (nt.assignee != -1 && this.nameData.getName(String.valueOf(nt.assignee)) == null) {
 			return new ResponseEntity<>("BAD REQUEST", HttpStatus.BAD_REQUEST);
 		}
-
-		String tID = RMIInstance.getInstance().newTicket(nt);
+		try {
+			String tID = RMIInstance.getInstance().newTicket(nt);
+		}
+		catch (ServerNotFoundException e) {
+			return new ResponseEntity<>("Servers Offline", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
@@ -67,8 +72,12 @@ public class TaskController {
 		if (ut.assignee != -1 && this.nameData.getName(String.valueOf(ut.assignee)) == null) {
 			return new ResponseEntity<>("BAD REQUEST", HttpStatus.BAD_REQUEST);
 		}
-
-		RMIInstance.getInstance().updateTicket(tID, ut);
+		try {
+			RMIInstance.getInstance().updateTicket(tID, ut);
+		}
+		catch (ServerNotFoundException e) {
+			return new ResponseEntity<>("Servers Offline", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
@@ -77,13 +86,18 @@ public class TaskController {
 	public ResponseEntity<String> deleteTask(@PathVariable("id") String tID) throws RemoteException {
 //        Endpoint to delete a task by id
 		System.out.println("Trying to delete ticket");
-		RMIInstance.getInstance().deleteTicket(tID);
+		try {
+			RMIInstance.getInstance().deleteTicket(tID);
+		}
+		catch (ServerNotFoundException e) {
+			return new ResponseEntity<>("Servers Offline", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
 	@CrossOrigin(origins = "*")
 	@GetMapping("/{id}")
-	public JSONObject getTask(@PathVariable("id") String tID) throws RemoteException {
+	public JSONObject getTask(@PathVariable("id") String tID) throws RemoteException, ServerNotFoundException {
 //        Endpoint to get a task by id
 		Ticket t = RMIInstance.getInstance().getTicket(tID);
 
@@ -103,7 +117,7 @@ public class TaskController {
 
 	@CrossOrigin(origins = "*")
 	@GetMapping("/user/{id}")
-	public JSONObject getUserTasks(@PathVariable("id") long id) throws RemoteException {
+	public JSONObject getUserTasks(@PathVariable("id") long id) throws RemoteException, ServerNotFoundException {
 //        Endpoint to get all of a specific users tasks
 		String uID = Long.toString(id);
 		HashMap<String, Ticket> tickets = RMIInstance.getInstance().getTicketByUser(uID);
@@ -120,7 +134,7 @@ public class TaskController {
 
 	@CrossOrigin(origins = "*")
 	@GetMapping("/unassigned")
-	public JSONObject getAllUnassigned() throws RemoteException {
+	public JSONObject getAllUnassigned() throws RemoteException, ServerNotFoundException {
 //        Endpoint to return all tickets
 		HashMap<String, Ticket> tickets = RMIInstance.getInstance().getAllUnassigned();
 		JSONObject wrapper = new JSONObject();

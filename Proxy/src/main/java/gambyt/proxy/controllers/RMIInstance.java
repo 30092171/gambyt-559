@@ -1,22 +1,27 @@
 package gambyt.proxy.controllers;
 
+import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.lang.*;
 
 import gambyt.backend.Database;
 import gambyt.backend.RemoteFrontend;
+import gambyt.backend.Server;
 import gambyt.backend.Ticket;
+import gambyt.proxy.ServerNotFoundException;
 
 public class RMIInstance implements RemoteFrontend {
-	private static RemoteFrontend[] BACKEND;
-	private static RemoteFrontend INSTANCE;
-	private static String[] IPS;
+	private static ArrayList<RemoteFrontend> INSTANCES = new ArrayList<RemoteFrontend>();
+	private static ArrayList<String> IPS = new ArrayList<String>();
+	private static RemoteFrontend SELF;
 	private static int INDEX = 0;
 
 	private static ArrayBlockingQueue<Request> Q;
@@ -27,56 +32,100 @@ public class RMIInstance implements RemoteFrontend {
 		QThread = new QueueThread(Q);
 	}
 
+	/*
+	 * Initialize Proxy with servers at first startup
+	 */
 	public static void initRMI(String[] ips) {
-		System.out.println("Using the following IP addresses for backend:");
-		if (ips.length == 0) { // use localhost
-			BACKEND = new RemoteFrontend[1];
-			IPS = new String[] { "localhost" };
-			String url = "rmi://localhost/";
-			try {
-				BACKEND[0] = (RemoteFrontend) Naming.lookup(url + "FrontendImpl");
-				System.out.println("\tlocalhost (success): " + BACKEND[0].getPathToData());
-			} catch (Exception e) {
-				System.out.println("IP: localhost");
-				System.out.println("Exception occurred initiating RMI: " + e.toString());
-				e.printStackTrace();
-			}
-		} else {
-			BACKEND = new RemoteFrontend[ips.length];
-			IPS = ips;
-			for (int i = 0; i < ips.length; i++) {
-				String url = "rmi://" + ips[i] + '/';
-				try {
-					BACKEND[i] = (RemoteFrontend) Naming.lookup(url + "FrontendImpl");
-					System.out.println('\t' + ips[i] + " (success): " + BACKEND[i].getPathToData());
-				} catch (Exception e) {
-					System.out.println("IP: " + ips[i]);
-					System.out.println("Exception occurred initiating RMI: " + e.toString());
-					e.printStackTrace();
-				}
-			}
-		}
-		INSTANCE = new RMIInstance();
+		System.setProperty("sun.rmi.transport.tcp.responseTimeout", "2000");
+		SELF = new RMIInstance();
 		QThread.start();
 		System.out.println("RMI Init Complete");
+//		System.out.println("Using the following IP addresses for backend:");
+//		if (ips.length == 0) { // use localhost
+//			IPS.add("localhost");
+//			registerInstance("localhost");
+//		} else {
+//			IPS = new ArrayList<String>(Arrays.asList(ips));
+//			for (int i = 0; i < ips.length; i++) {
+//				registerInstance(ips[i]);
+//			}
+//		}
+	}
+
+	public static void registerFirstInstance(String ip) {
+		String url = "rmi://" + ip + '/';
+		try {
+			RemoteFrontend newInstance = (RemoteFrontend) Naming.lookup(url + "FrontendImpl");
+			INSTANCES.add(newInstance);
+			IPS.add(ip);
+			System.out.println('\t' + ip + " (success): " + newInstance.getPathToData());
+		} catch (Exception e) {
+			System.out.println("IP: " + ip);
+			System.out.println("Exception occurred initiating RMI: " + e.toString());
+			e.printStackTrace();
+		}
+	}
+
+	public static RemoteFrontend registerNewInstance(String ip) throws RemoteException {
+		String url = "rmi://" + ip + '/';
+		try {
+			RemoteFrontend newInstance = (RemoteFrontend) Naming.lookup(url + "FrontendImpl");
+			return newInstance;
+		} catch (Exception e) {
+			System.out.println("IP: " + ip);
+			System.out.println("Exception occurred initiating RMI: " + e.toString());
+			throw new RemoteException(e.toString());
+		}
+	}
+
+	public static void addInstanceToRotation(RemoteFrontend inst, String ip) throws RemoteException {
+		INSTANCES.add(inst);
+		IPS.add(ip);
+		try {
+			System.out.println('\t' + ip + " (success): " + inst.getPathToData());
+		} catch (ServerNotFoundException e) {
+			e.printStackTrace();
+			System.err.println("should not happen");
+		}
 	}
 
 	public static RemoteFrontend getInstance() {
-		// if (INDEX >= INSTANCES.length)
-		// INDEX = 0;
-		// System.out.println(INDEX + ": " + IPS[INDEX]);
-		// return INSTANCES[INDEX++];
-		return INSTANCE;
+		return SELF;
 	}
 
-	private static synchronized RemoteFrontend getBackendRR() {
-		if (INDEX >= BACKEND.length)
-			INDEX = 0;
-		System.out.println(INDEX + ": " + IPS[INDEX]);
-		return BACKEND[INDEX++];
+	private static synchronized RemoteFrontend getBackendRR() throws ServerNotFoundException {
+		while (instanceExists()) {
+			INDEX = INDEX % INSTANCES.size();
+//			if (INDEX >= INSTANCES.size())
+//				INDEX = 0;
+			System.out.println(INDEX + ": " + IPS.get(INDEX));
+			try {
+				INSTANCES.get(INDEX).checkStatus();
+				return INSTANCES.get(INDEX++);
+			} catch (RemoteException e) {
+				System.out.println("Remote Server " + IPS.get(INDEX) + " is not responding. Dropping it from list...");
+				INSTANCES.remove(INDEX);
+				IPS.remove(INDEX);
+			}
+		}
+		throw new ServerNotFoundException("No more servers, please wait for another server to connect");
 	}
 
-	private <R> R queueAndBlock(Supplier<R> sf) {
+	public static boolean instanceExists() {
+		return INSTANCES.size() > 0;
+	}
+
+	public static boolean ipInRotation(String ip) {
+		return IPS.contains(ip);
+	}
+
+	public static void removeServer(String ip) {
+		int i = IPS.indexOf(ip);
+		IPS.remove(i);
+		INSTANCES.remove(i);
+	}
+
+	private <R> R queueAndBlock(RemoteSupplier<R> sf) throws RemoteException {
 		Request<R> r = new Request<R>(sf);
 		try {
 			while (!Q.offer(r, 1000, TimeUnit.MILLISECONDS))
@@ -90,162 +139,119 @@ public class RMIInstance implements RemoteFrontend {
 
 	// each call blocks until its released from Q
 	@Override
-	public String newTicket(Ticket ticket) throws RemoteException {
+	public String newTicket(Ticket ticket) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
-			try {
-				return getBackendRR().newTicket(ticket);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			return be.newTicket(ticket);
 		});
 	}
 
 	@Override
-	public void deleteTicket(String tID) throws RemoteException {
+	public void deleteTicket(String tID) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		queueAndBlock(() -> {
-			try {
-				getBackendRR().deleteTicket(tID);
-				return null;
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			be.deleteTicket(tID);
+			return null;
 		});
 	}
 
 	@Override
-	public ArrayList<String> getUserInbox(String userID) throws RemoteException {
+	public ArrayList<String> getUserInbox(String userID) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
-			try {
-				return getBackendRR().getUserInbox(userID);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			return be.getUserInbox(userID);
 		});
 	}
 
 	@Override
-	public void updateTicket(String tID, Ticket ticket) throws RemoteException {
+	public void updateTicket(String tID, Ticket ticket) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		queueAndBlock(() -> {
-			try {
-				getBackendRR().updateTicket(tID, ticket);
-				return null;
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			be.updateTicket(tID, ticket);
+			return null;
 		});
 	}
 
 	@Override
-	public void clearUserInbox(String userID) throws RemoteException {
+	public void clearUserInbox(String userID) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		queueAndBlock(() -> {
-			try {
-				getBackendRR().clearUserInbox(userID);
-				return null;
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			be.clearUserInbox(userID);
+			return null;
 		});
 	}
 
 	@Override
-	public HashMap<String, Ticket> getTicketByUser(String userID) throws RemoteException {
+	public HashMap<String, Ticket> getTicketByUser(String userID) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
-			try {
-				return getBackendRR().getTicketByUser(userID);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			return be.getTicketByUser(userID);
 		});
 	}
 
 	@Override
-	public HashMap<String, Ticket> getAllTickets() throws RemoteException {
+  public HashMap<String, Ticket> getAllTickets() throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
-			try {
-				return getBackendRR().getAllTickets();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			return be.getAllTickets();
 		});
 	}
 
 	@Override
-	public HashMap<String, Ticket> getAllUnassigned() throws RemoteException {
+	public HashMap<String, Ticket> getAllUnassigned() throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
-			try {
-				return getBackendRR().getAllUnassigned();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			return be.getAllUnassigned();
 		});
 	}
 
 	@Override
-	public Ticket getTicket(String tID) throws RemoteException {
+	public Ticket getTicket(String tID) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
-			try {
-				return getBackendRR().getTicket(tID);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			return be.getTicket(tID);
 		});
 	}
 
 	@Override
-	public String getPathToData() throws RemoteException {
+	public String getPathToData() throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
-			try {
-				return getBackendRR().getPathToData();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			return be.getPathToData();
 		});
 	}
 
 	@Override
-	public void setPathToData(String pathToData) throws RemoteException {
+	public void setPathToData(String pathToData) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		queueAndBlock(() -> {
-			try {
-				getBackendRR().setPathToData(pathToData);
-				return null;
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			be.setPathToData(pathToData);
+			return null;
 		});
 	}
 
 	@Override
-	public Database getDatabase() throws RemoteException {
+	public Database getDatabase() throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
-			try {
-				return getBackendRR().getDatabase();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			throw new RuntimeException("error getting response from backend");
+			return be.getDatabase();
+		});
+	}
+
+	@Override
+	public void setDatabase(Database db) throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
+		queueAndBlock(() -> {
+			be.setDatabase(db);
+			return null;
+		});
+	}
+
+	@Override
+	public int checkStatus() throws RemoteException, ServerNotFoundException {
+		RemoteFrontend be = getBackendRR();
+		return queueAndBlock(() -> {
+			return be.checkStatus();
 		});
 	}
 }
