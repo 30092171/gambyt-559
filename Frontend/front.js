@@ -180,6 +180,7 @@ inboxLink.addEventListener("click", function(event) {
 
 function displayEdit(event) {
   event.preventDefault();
+  console.log("Event target dataset ticket: " + event.target.dataset.ticket);
   var ticketData = JSON.parse(event.target.dataset.ticket);
 
   // Display the edit screen
@@ -271,7 +272,7 @@ function loginSuccess() {
 }
 
 function loginFailure() {
-
+  alert("Failed login; user doesn't exist");
 }
 
 function getTickets(event) {

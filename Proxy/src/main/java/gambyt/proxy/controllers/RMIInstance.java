@@ -190,7 +190,7 @@ public class RMIInstance implements RemoteFrontend {
 	}
 
 	@Override
-	public HashMap<String, Ticket> getAllTickets() throws RemoteException, ServerNotFoundException {
+  public HashMap<String, Ticket> getAllTickets() throws RemoteException, ServerNotFoundException {
 		RemoteFrontend be = getBackendRR();
 		return queueAndBlock(() -> {
 			return be.getAllTickets();
