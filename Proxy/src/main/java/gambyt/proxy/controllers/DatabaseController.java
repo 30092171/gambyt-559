@@ -44,4 +44,16 @@ public class DatabaseController {
         }
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
+
+    @PostMapping("/check_status")
+    public ResponseEntity<String> checkProxyStatus(HttpServletRequest req) {
+        String ip = req.getRemoteAddr();
+
+        if (RMIInstance.ipInRotation(ip)) {
+            return new ResponseEntity<>("OK", HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("Server Not Found", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
