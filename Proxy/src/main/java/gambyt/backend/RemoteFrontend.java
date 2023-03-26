@@ -10,7 +10,7 @@ import gambyt.proxy.ServerNotFoundException;
 
 public interface RemoteFrontend extends Remote {
 
-	public String newTicket(Ticket ticket) throws RemoteException, ServerNotFoundException;
+	public String newTicket(Ticket ticket, String tID) throws RemoteException, ServerNotFoundException;
 
 	public void deleteTicket(String tID) throws RemoteException, ServerNotFoundException;
 

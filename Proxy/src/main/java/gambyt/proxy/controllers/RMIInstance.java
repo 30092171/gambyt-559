@@ -183,9 +183,9 @@ public class RMIInstance implements RemoteFrontend {
 	// each call blocks until its released from Q
 	// Write
 	@Override
-	public String newTicket(Ticket ticket) throws RemoteException, ServerNotFoundException {
+	public String newTicket(Ticket ticket, String tID) throws RemoteException, ServerNotFoundException {
 		return queueAndBlock(true, (rf) -> {
-			return rf.newTicket(ticket);
+			return rf.newTicket(ticket,tID);
 		});
 	}
 
