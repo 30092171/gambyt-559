@@ -53,6 +53,7 @@ public class RMIInstance implements RemoteFrontend {
 	public static void registerFirstInstance(String ip) {
 		String url = "rmi://" + ip + '/';
 		try {
+			System.out.println("Registering " + ip + " as primary replica");
 			RemoteFrontend newInstance = (RemoteFrontend) Naming.lookup(url + "FrontendImpl");
 			INSTANCES.add(newInstance);
 			IPS.add(ip);
