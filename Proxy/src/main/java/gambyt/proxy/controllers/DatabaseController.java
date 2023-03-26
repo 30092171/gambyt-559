@@ -19,6 +19,7 @@ public class DatabaseController {
     @PostMapping("/register")
     public ResponseEntity<String> registerBackend(HttpServletRequest req) throws RemoteException {
         String ip = req.getRemoteAddr();
+        System.out.println("New registration request from " + ip);
 
         // If the IP connecting is already registered, remove it from the rotation before re-registering
         if (RMIInstance.ipInRotation(ip)) {

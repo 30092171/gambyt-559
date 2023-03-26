@@ -8,7 +8,7 @@ import gambyt.proxy.controllers.RMIInstance;
 @SpringBootApplication
 public class Main {
 	public static void main(String[] args) {
-		RMIInstance.initRMI(args);
+		RMIInstance.initRMI();
 		SpringApplication.run(Main.class, args);
 	}
 }
