@@ -6,6 +6,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import gambyt.proxy.ServerNotFoundException;
+
 public interface RemoteFrontend extends Remote {
 
 	public String newTicket(Ticket ticket) throws RemoteException, ServerNotFoundException;

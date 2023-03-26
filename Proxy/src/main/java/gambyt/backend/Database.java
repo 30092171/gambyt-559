@@ -1,5 +1,6 @@
 package gambyt.backend;
 
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap; // import the HashMap class
@@ -39,7 +40,7 @@ public class Database implements Serializable {
 		Tickets = newDB.getTickets();
 		Inbox = newDB.getInboxes();
 	}
-
+	
 	/**
 	 * Constructor which populates off of a JSON file.
 	 * @param path : This is the filepath to the JSON
