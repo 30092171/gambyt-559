@@ -15,6 +15,8 @@ import java.rmi.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.util.UUID;
+
 @SuppressWarnings("unchecked")
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -53,7 +55,8 @@ public class TaskController {
 			return new ResponseEntity<>("BAD REQUEST", HttpStatus.BAD_REQUEST);
 		}
 		try {
-			String tID = RMIInstance.getInstance().newTicket(nt);
+			String tID = UUID.randomUUID().toString().replaceAll("-","");
+			RMIInstance.getInstance().newTicket(nt,tID);
 		}
 		catch (ServerNotFoundException e) {
 			return new ResponseEntity<>("Servers Offline", HttpStatus.INTERNAL_SERVER_ERROR);

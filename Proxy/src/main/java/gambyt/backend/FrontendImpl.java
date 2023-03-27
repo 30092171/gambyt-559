@@ -1,6 +1,5 @@
 package gambyt.backend;
 
-
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -21,8 +20,8 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		this.database = new Database(path);
 	}
 
-	public String newTicket(Ticket ticket) {
-		String tID = generateTicketID();
+	public String newTicket(Ticket ticket, String tID) {
+		//String tID = generateTicketID();
 		database.addTicket(tID, ticket);
 		database.notifySubscribers(tID, "Ticket " + tID + ": " + ticket.name + " has been added.");
 		try {
@@ -103,10 +102,10 @@ public class FrontendImpl extends UnicastRemoteObject implements RemoteFrontend 
 		return database.getTicket(tID);
 	}
 
-	private String generateTicketID() {
-		// From: https://blog.devgenius.io/7-famous-approaches-to-generate-distributed-id-with-comparison-table-af89afe4601f
-		return UUID.randomUUID().toString().replaceAll("-","");
-	}
+//	private String generateTicketID() {
+//		// From: https://blog.devgenius.io/7-famous-approaches-to-generate-distributed-id-with-comparison-table-af89afe4601f
+//		return UUID.randomUUID().toString().replaceAll("-","");
+//	}
 
 	public String getPathToData() {
 		return pathToData;
