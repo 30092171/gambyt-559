@@ -1,9 +1,25 @@
 const baseURL = 'http://127.0.0.1:8080/api/v1'; // This needs to be updated and set if changed
-var userID = -1;
+userID = getCookie("userID");
 
 // can't do this while on login page
 window.onload = function() {
   getTickets();
+}
+
+function getCookie(cookie) {
+  let name = cookie + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+      }
+  }
+  return "";
 }
 
 function displayTickets(jsonData) {
@@ -18,15 +34,19 @@ function displayTickets(jsonData) {
   // Loop through the tickets object and generate HTML code for each ticket
   for (const ticketId in tickets) {
     const ticket = tickets[ticketId];
-    var priority_value;
+    var p_val;
     var status_value;
-    if (ticket.priority == 0) {
-      priority_value = "Low";
+
+    if (ticket.priority == 2) {
+      p_val = "High";
     } else if (ticket.priority == 1) {
-      priority_value = "Medium";
-    } else if (tickets.priority == 2) {
-      priority_value = "High";
+      p_val = "Medium";
+    } else {
+      p_val = "Low";
     }
+
+    // console.log("Priority value after parsing: " + priority_value);
+    console.log("P")
     if (ticket.status == 0) {
       status_value = "To-Do";
     } else if (ticket.status == 1) {
@@ -42,7 +62,7 @@ function displayTickets(jsonData) {
         <div class="ticket-description">${ticket.description}</div>
         <div class="ticket-info">
           <div class="date"><strong>Date:</strong> ${ticket.dateAssigned}</div>
-          <div class="priority"><strong>Priority:</strong> ${priority_value}</div>
+          <div class="priority"><strong>Priority:</strong> ${p_val}</div>
         </div>
         <div class="ticket-info">
           <div class="assignee"><strong>Assignee:</strong> ${ticket.assigneeName}</div>
@@ -133,7 +153,7 @@ function updateDynamicTicketButtons() {
 
 
 // Get the HTML elements to show/hide
-const loginSection = document.getElementById("login-section");
+// const loginSection = document.getElementById("login-section");
 const editTicketSection = document.getElementById("edit-ticket");
 const createTicketSection = document.getElementById("create-ticket");
 const viewTicketsSection = document.getElementById("view-tickets");
@@ -146,12 +166,12 @@ const viewTicketsLink = document.querySelector("a[href='#view-tickets']");
 const inboxLink = document.querySelector("a[href='#inbox']");
 
 // Hide all sections except for the Create a Ticket section initially
-loginSection.style.display = "block";
+// loginSection.style.display = "block";
 createTicketSection.style.display = "none";
 editTicketSection.style.display = "none";
-viewTicketsSection.style.display = "none";
+viewTicketsSection.style.display = "block";
 inboxSection.style.display = "none";
-navbar.style.display = "none";
+// navbar.style.display = "none";
 
 // Attach click event listeners to switch scenes
 createTicketLink.addEventListener("click", function(event) {
@@ -223,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const allTickets = document.getElementById("all-tickets");
   const createNewTicket = document.getElementById("submitTicket");
   const updateTicket = document.getElementById("editTicket");
-  const submitLogin = document.getElementById("submitLogin");
+  // const submitLogin = document.getElementById("submitLogin");
   const clearInboxButton = document.getElementById("clear-inbox");
   const allTicketstwo = document.getElementById("all");
   const myTickets = document.getElementById("mine");
@@ -239,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
   myInbox.addEventListener('click', getInbox)
   createNewTicket.addEventListener('click', postTicket);
   updateTicket.addEventListener("click", putTicket);
-  submitLogin.addEventListener('click', attemptLogin);
+  // submitLogin.addEventListener('click', attemptLogin);
   clearInboxButton.addEventListener('click', clearUserInbox);
   allTicketstwo.addEventListener('click', getTickets);
   myTickets.addEventListener('click', getMyTickets);
@@ -260,20 +280,20 @@ document.addEventListener('DOMContentLoaded', function() {
 //     .catch(error => console.error(error));
 // }
 
-function loginSuccess() {
-  editTicketSection.style.display = "none";
-  createTicketSection.style.display = "none";
-  viewTicketsSection.style.display = "block";
-  inboxSection.style.display = "none";
-  loginSection.style.display = "none";
-  navbar.style.display = "block";
-  getTickets();
-  updateDynamicTicketButtons();
-}
+// function loginSuccess() {
+//   editTicketSection.style.display = "none";
+//   createTicketSection.style.display = "none";
+//   viewTicketsSection.style.display = "block";
+//   inboxSection.style.display = "none";
+//   loginSection.style.display = "none";
+//   // navbar.style.display = "block";
+//   getTickets();
+//   updateDynamicTicketButtons();
+// }
 
-function loginFailure() {
-  alert("Failed login; user doesn't exist");
-}
+// function loginFailure() {
+//   alert("Failed login; user doesn't exist");
+// }
 
 function getTickets(event) {
   const path = '/tasks';
@@ -436,39 +456,39 @@ function postTicket(event) {
     .catch(error => console.error(error));
 }
 
-function attemptLogin(event) {
-  console.log("Attempt login called")
-  event.preventDefault();
-  const form = event.target.parentNode;
-  const formData = new FormData(form);
-  const id = formData.get("id");
+// function attemptLogin(event) {
+//   console.log("Attempt login called")
+//   event.preventDefault();
+//   const form = event.target.parentNode;
+//   const formData = new FormData(form);
+//   const id = formData.get("id");
 
-  const path = "/users/login/" + id;
-  const url = baseURL + path;
-  console.log(url);
+//   const path = "/users/login/" + id;
+//   const url = baseURL + path;
+//   console.log(url);
 
-  const options = {
-    method: 'GET',
-    headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'},
-  };
+//   const options = {
+//     method: 'GET',
+//     headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'},
+//   };
 
-  console.log(options);
+//   console.log(options);
 
-  fetch(url, options)
-    .then(response => response.json())
-    .then(data => {
-      if (data['status']) {
-        userID = id;
-        loginSuccess();
-      } else {
-        loginFailure();
-      }
-    }) 
-    .catch(error => console.error(error));
+//   fetch(url, options)
+//     .then(response => response.json())
+//     .then(data => {
+//       if (data['status']) {
+//         userID = id;
+//         loginSuccess();
+//       } else {
+//         loginFailure();
+//       }
+//     }) 
+//     .catch(error => console.error(error));
 
-  console.log(JSON.stringify(Object.fromEntries(formData)));
-  // if valid response, set global variable userID to id entered 
-}
+//   console.log(JSON.stringify(Object.fromEntries(formData)));
+//   // if valid response, set global variable userID to id entered 
+// }
 
 // function unsubTicket() {
 //   //  Need to get ticket ID from inbox for ticket
