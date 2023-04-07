@@ -79,12 +79,8 @@ The program will run forever until an interrupt is detected.
 */
 int main (){
 
-    // Register signal and signal handler
-    signal(SIGINT, signal_callback_handler);
-
-    //This currently throws warnings but I can't use const char*[], so oh well.
-    char *arr[] = {"-jar", "target/Proxy-0.0.1-SNAPSHOT.jar", NULL};
-
+   // Register signal and signal handler
+   signal(SIGINT, signal_callback_handler);
 
    while(true){
         cout << "Starting Proxy" << endl;
@@ -94,7 +90,7 @@ int main (){
 
         //Child
         if(p == 0){
-            execv("/bin/java", arr); //Launches proxy
+            system("java -jar target/Proxy-0.0.1-SNAPSHOT.jar");
             return 0;
         }
 
@@ -149,6 +145,3 @@ void signal_callback_handler(int signum) {
    // Terminate program
    exit(signum);
 }
-
-
-
