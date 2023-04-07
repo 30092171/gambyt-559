@@ -34,15 +34,19 @@ function displayTickets(jsonData) {
   // Loop through the tickets object and generate HTML code for each ticket
   for (const ticketId in tickets) {
     const ticket = tickets[ticketId];
-    var priority_value;
+    var p_val;
     var status_value;
-    if (ticket.priority == 0) {
-      priority_value = "Low";
+
+    if (ticket.priority == 2) {
+      p_val = "High";
     } else if (ticket.priority == 1) {
-      priority_value = "Medium";
-    } else if (tickets.priority == 2) {
-      priority_value = "High";
+      p_val = "Medium";
+    } else {
+      p_val = "Low";
     }
+
+    // console.log("Priority value after parsing: " + priority_value);
+    console.log("P")
     if (ticket.status == 0) {
       status_value = "To-Do";
     } else if (ticket.status == 1) {
@@ -58,7 +62,7 @@ function displayTickets(jsonData) {
         <div class="ticket-description">${ticket.description}</div>
         <div class="ticket-info">
           <div class="date"><strong>Date:</strong> ${ticket.dateAssigned}</div>
-          <div class="priority"><strong>Priority:</strong> ${priority_value}</div>
+          <div class="priority"><strong>Priority:</strong> ${p_val}</div>
         </div>
         <div class="ticket-info">
           <div class="assignee"><strong>Assignee:</strong> ${ticket.assigneeName}</div>
